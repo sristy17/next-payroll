@@ -1,4 +1,4 @@
-export default function Signup() {
+export default function Login() {
     return (
       <>
         <div className="flex h-screen">
@@ -9,7 +9,7 @@ export default function Signup() {
             </div>
             <div className="absolute left-36 top-60">
               <h1 className="text-3xl font-bold">Getting Started</h1>
-              <p className="text-gray-400">Welcome to Next Pay - Let's create your account</p>
+              <p className="text-gray-400">Welcome back to Next Pay - Login to your account</p>
               <div>
                 <div className="absolute top-24">
                   <label htmlFor="email" className="text-md font-medium text-gray-100">
@@ -44,12 +44,12 @@ export default function Signup() {
                   type="submit"
                   className="absolute top-64 w-full py-2 px-4 bg-gradient-to-br from-green-700 to-black text-white font-semibold rounded-md shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 >
-                  Sign Up
+                  Log In
                 </button>
                 <p className="text-gray-400 absolute top-72 m-5">
-                  Already have an Account?
-                  <a href="/login" className="absolute top-0 ml-3 font-bold text-white">
-                    Login
+                  Do not have an Account?
+                  <a href="/signup" className="absolute top-0 ml-3 font-bold text-white">
+                    Signup
                   </a>
                 </p>
               </div>

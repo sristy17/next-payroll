@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Multi-Tenant Payroll & Tax Compliance System
 
-## Getting Started
+## Introduction
+The **Multi-Tenant Payroll & Tax Compliance System** is a modern, AI-powered solution designed to streamline **payroll processing, tax compliance, and financial management** for businesses and individuals. It automates **ITR-1 (Sahaj), ITR-2 (Sugam), GST return filing, and payment tracking** while leveraging **Gemini AI** to enhance accuracy and efficiency.
 
-First, run the development server:
+## Features
+### Payroll & Salary Processing
+- Automated salary disbursement with tax deductions.
+- Payslip generation and salary record maintenance.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Income Tax Return (ITR) Filing
+- Supports **ITR-1 (Sahaj) and ITR-2 (Sugam)**.
+- Automated tax calculation and deductions.
+
+### GST Return Filing
+- Simplified GST return preparation and submission.
+- Auto-populated GST data based on transactions.
+
+### Payments & Transactions Management
+- Tracks income, expenses, and savings.
+- Generates detailed financial reports.
+
+### AI-Powered Tax Assistant
+- Uses **Gemini AI** for tax-saving recommendations.
+- Identifies anomalies and ensures compliance.
+
+### Multi-Tenant Support
+- Role-based access control for businesses, users, and accountants.
+
+## Technology Stack
+### **Frontend**
+- **Next.js** – SEO-friendly, fast, and server-side rendered.
+- **Tailwind CSS** – Utility-first CSS for modern UI design.
+
+### **Backend**
+- **Node.js** (Express.js) – API development.
+- **Supabase** – Scalable backend for authentication and data storage.
+
+### **AI Integration**
+- **Gemini AI** for tax automation and compliance recommendations.
+
+## System Architecture
+- **Frontend (Next.js)**: Handles user interactions and dashboard.
+- **Backend (Node.js + Supabase)**: Manages authentication, payroll, and tax processing.
+- **Database (Supabase)**: Stores multi-tenant data, transactions, and filings.
+- **AI Module (Gemini AI)**: Automates tax computations and deduction suggestions.
+
+## Scalability
+- Multi-tenant support for handling multiple businesses.
+- Cloud-ready with high availability and performance.
+- AI-driven automation for reducing manual workload.
+
+## Installation & Setup
+### Prerequisites
+- Node.js & npm installed
+- Supabase account setup
+
+### Clone the Repository
+```sh
+  git clone https://github.com/sristy17/next-payroll.git
+  cd multi-tenant-payroll-tax-system
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Install Dependencies
+```sh
+  npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Setup Environment Variables
+Create a `.env` file and add your **Supabase API keys**.
+```sh
+  SUPABASE_URL=your_supabase_url
+  SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Run the Application
+```sh
+  npm run dev
+```
 
-## Learn More
+## API Endpoints
+| Method | Endpoint | Description |
+|--------|---------|-------------|
+| `POST` | `/api/auth/login` | User login |
+| `POST` | `/api/auth/signup` | User registration |
+| `GET`  | `/api/transactions` | Get transactions |
+| `POST` | `/api/tax/submit` | Submit tax filing |
 
-To learn more about Next.js, take a look at the following resources:
+## Database Schema (Supabase)
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+CREATE TABLE transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id),
+    amount DECIMAL(10,2) NOT NULL,
+    category VARCHAR(100),
+    transaction_type VARCHAR(50) CHECK (transaction_type IN ('income', 'expense')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contributing
+1. Fork the repository.
+2. Create a new branch.
+3. Commit your changes.
+4. Push the branch and open a pull request.
 
-## Deploy on Vercel
+## License
+This project is licensed under the MIT License.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

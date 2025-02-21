@@ -1,58 +1,88 @@
 # Multi-Tenant Payroll & Tax Compliance System
 
+
+**Figma Prototype:** <a href="https://www.figma.com/proto/Q897qPu0feZhwH4dOUJIpl/next-payroll-final?node-id=102-12&t=gzZkW21oc463V5WK-1" >Prototype </a>
+
 ## Introduction
-The **Multi-Tenant Payroll & Tax Compliance System** is a modern, AI-powered solution designed to streamline **payroll processing, tax compliance, and financial management** for businesses and individuals. It automates **ITR-1 (Sahaj), ITR-2 (Sugam), GST return filing, and payment tracking** while leveraging **Gemini AI** to enhance accuracy and efficiency.
+The **Multi-Tenant Payroll & Tax Compliance System** automates tax filings, payroll management, and compliance for multiple tenants (businesses/users). It simplifies **ITR-1 (Sahaj), ITR-2 (Sugam), GST return filing, payments, user management, and transaction tracking** while leveraging **Gemini AI** for automation, minimizing errors, and optimizing tax savings.
 
-## Features
-### Payroll & Salary Processing
-- Automated salary disbursement with tax deductions.
-- Payslip generation and salary record maintenance.
+## Key Features & Use Cases
+- **Payroll Processing**: Automated salary disbursement, tax deductions, payslips.
+- **ITR Filing**: Supports ITR-1 & ITR-2, auto tax calculations, deduction optimization.
+- **GST Return Filing**: Simplified GST return submission, compliance automation.
+- **Payments & Transactions**: Tracks income/expenses, generates financial reports.
+- **AI-Powered Tax Assistant**: Automates tax calculations, personalized tax-saving recommendations, anomaly detection.
+- **Multi-Tenant Support**: Role-based access for users, accountants, and admins.
 
-### Income Tax Return (ITR) Filing
-- Supports **ITR-1 (Sahaj) and ITR-2 (Sugam)**.
-- Automated tax calculation and deductions.
-
-### GST Return Filing
-- Simplified GST return preparation and submission.
-- Auto-populated GST data based on transactions.
-
-### Payments & Transactions Management
-- Tracks income, expenses, and savings.
-- Generates detailed financial reports.
-
-### AI-Powered Tax Assistant
-- Uses **Gemini AI** for tax-saving recommendations.
-- Identifies anomalies and ensures compliance.
-
-### Multi-Tenant Support
-- Role-based access control for businesses, users, and accountants.
+## Why This System is Better?
+| Feature | Existing Solutions | Our System |
+|---------|------------------|------------|
+| **Multi-Tenancy** | Limited | Full support for multiple businesses/users |
+| **Automated Tax Filing** | Manual effort | AI-powered automation |
+| **AI-Powered Insights** | No AI assistance | AI-driven tax recommendations & anomaly detection |
+| **Processing Speed** | Slow | Fast, scalable with Supabase |
+| **Scalability** | Limited | Cloud-ready, serverless infrastructure |
 
 ## Technology Stack
-### **Frontend**
-- **Next.js** – SEO-friendly, fast, and server-side rendered.
-- **Tailwind CSS** – Utility-first CSS for modern UI design.
+- **Frontend**: Next.js (SEO-friendly, SSR) + Tailwind CSS (utility-first styling)
+- **Backend**: Supabase (open-source, scalable backend-as-a-service)
+- **AI Integration**: Gemini AI (tax automation, chatbot, anomaly detection)
+- **Authentication & Security**: Supabase Auth (JWT-based authentication, secure APIs)
 
-### **Backend**
-- **Node.js** (Express.js) – API development.
-- **Supabase** – Scalable backend for authentication and data storage.
+## System Architecture & Scalability
+- **Frontend (Next.js)**: User dashboard & visualization
+- **Backend (Supabase)**: Manages authentication, payroll, transactions
+- **Database (Supabase)**: Stores multi-tenant data, payments, filings
+- **AI Module (Gemini AI)**: Automates tax calculations & deductions
 
-### **AI Integration**
-- **Gemini AI** for tax automation and compliance recommendations.
+## Advantages & Future Scopes
+### Advantages
+- Faster tax processing with AI automation
+- Multi-tenant support for businesses and accountants
+- AI-powered insights for tax optimization
+- Scalable cloud-based architecture
 
-## System Architecture
-- **Frontend (Next.js)**: Handles user interactions and dashboard.
-- **Backend (Node.js + Supabase)**: Manages authentication, payroll, and tax processing.
-- **Database (Supabase)**: Stores multi-tenant data, transactions, and filings.
-- **AI Module (Gemini AI)**: Automates tax computations and deduction suggestions.
+### Future Scopes
+- Regular updates for evolving tax laws
+- Potential offline support for better accessibility
 
-## Scalability
-- Multi-tenant support for handling multiple businesses.
-- Cloud-ready with high availability and performance.
-- AI-driven automation for reducing manual workload.
+## Database Schema (Supabase)
+### **Users Table**
+- `id` (UUID, PRIMARY KEY)
+- `email` (VARCHAR, UNIQUE, NOT NULL)
+- `password` (VARCHAR, NOT NULL)
+- `role` (VARCHAR, DEFAULT 'admin')
+- `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+### **Businesses Table** (One-to-One with Users)
+- `id` (UUID, PRIMARY KEY)
+- `name` (VARCHAR, NOT NULL)
+- `owner_id` (UUID, FOREIGN KEY → users(id), NOT NULL)
+- `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+### **Transactions Table**
+- `id` (UUID, PRIMARY KEY)
+- `user_id` (UUID, FOREIGN KEY → users(id), ON DELETE SET NULL)
+- `business_id` (UUID, FOREIGN KEY → businesses(id), ON DELETE SET NULL)
+- `amount` (DECIMAL, NOT NULL)
+- `category` (VARCHAR, NOT NULL)
+- `transaction_type` (VARCHAR, CHECK ('income' OR 'expense'))
+- `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+### **Tax Filings Table**
+- `id` (UUID, PRIMARY KEY)
+- `user_id` (UUID, FOREIGN KEY → users(id), ON DELETE CASCADE)
+- `filing_type` (VARCHAR, CHECK ('ITR-1', 'ITR-2', 'GST'))
+- `status` (VARCHAR, CHECK ('pending', 'submitted', 'approved'))
+- `submitted_at` (TIMESTAMP, NULLABLE)
+
+### **Metadata Table**
+- `id` (UUID, FOREIGN KEY → tax_filing(id))
+- `user_id` (UUID, FOREIGN KEY → users(id), ON DELETE CASCADE)
+- `url` (VARCHAR, NOT NULL)
 
 ## Installation & Setup
 ### Prerequisites
-- Node.js & npm installed
 - Supabase account setup
 
 ### Clone the Repository
@@ -65,7 +95,6 @@ The **Multi-Tenant Payroll & Tax Compliance System** is a modern, AI-powered sol
 ```sh
   npm install
 ```
-
 ### Setup Environment Variables
 Create a `.env` file and add your **Supabase API keys**.
 ```sh
@@ -76,34 +105,6 @@ Create a `.env` file and add your **Supabase API keys**.
 ### Run the Application
 ```sh
   npm run dev
-```
-
-## API Endpoints
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| `POST` | `/api/auth/login` | User login |
-| `POST` | `/api/auth/signup` | User registration |
-| `GET`  | `/api/transactions` | Get transactions |
-| `POST` | `/api/tax/submit` | Submit tax filing |
-
-## Database Schema (Supabase)
-```sql
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) DEFAULT 'user',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE transactions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    amount DECIMAL(10,2) NOT NULL,
-    category VARCHAR(100),
-    transaction_type VARCHAR(50) CHECK (transaction_type IN ('income', 'expense')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 ```
 
 ## Contributing

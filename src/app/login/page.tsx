@@ -1,11 +1,15 @@
+import Image from 'next/image';
+import logo from '../../../public/logo.png';
+
 export default function Login() {
     return (
       <>
         <div className="flex h-screen">
           {/* Left Section */}
           <div className="w-1/2 flex items-center justify-center relative">
-            <div className="absolute top-28 left-32 w-28 h-28 rounded-3 mb-5">
-              <img src="/logo.png" alt="logo" />
+          <div className="absolute top-28 left-32 w-28 h-28 rounded-3 mb-5">
+              <Image src={logo} alt="logo" />
+          </div>
             </div>
             <div className="absolute left-36 top-60">
               <h1 className="text-3xl font-bold">Getting Started</h1>
@@ -68,12 +72,11 @@ export default function Login() {
             </div>
 
             <div className="absolute top-80 left-96 mt-10 w-48 h-48 rounded-3 mb-5">
-              <img src="/logo.png" alt="logo" />
+            <Image src={logo} alt="logo" />
             </div>
           
 
           </div>
-        </div>
       </>
     );
 }

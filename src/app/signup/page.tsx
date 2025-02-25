@@ -12,9 +12,9 @@ export default function Signup() {
             </div>
             <div className="absolute left-36 top-60">
               <h1 className="text-3xl font-bold">Getting Started</h1>
-              <p className="text-gray-400">Welcome to Next Pay - Let&aposs create your account</p>
+              <p className="text-gray-400">Welcome to Next Pay - Let&apos;s create your account</p>
               <div>
-                <div className="absolute top-24">
+              <div className="absolute top-24">
                   <label htmlFor="email" className="text-md font-medium text-gray-100">
                     Email
                   </label>

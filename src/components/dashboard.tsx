@@ -5,7 +5,7 @@ export default function Dashboard(){
     return(
         <>
         {/* left */}
-        <div className="w-[25%] bg-gradient-to-br rounded-3xl m-2 from-green-900 to-black flex items-left justify-start absolute top-0 bottom-0 flex-col">
+        <div className="w-[20%] bg-gradient-to-br rounded-3xl m-2 from-green-900 to-black flex items-left justify-start absolute top-0 bottom-0 flex-col">
             <div className="flex flex-row font-bold text-3xl text-white p-4 m-5">
             <div className="w-12 h-12 rounded-3 ">
             <Image src={logo} alt="logo" />
@@ -14,7 +14,7 @@ export default function Dashboard(){
             Next Payroll
             </div>
             </div>
-            <div className="font-sans text-xl text-white p-2 ml-5 mt-0 space-y-3">
+            <div className="font-sans text-l text-white p-2 ml-5 mt-0 space-y-3">
                 <div className="flex gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13 8V4q0-.425.288-.712T14 3h6q.425 0 .713.288T21 4v4q0 .425-.288.713T20 9h-6q-.425 0-.712-.288T13 8M3 12V4q0-.425.288-.712T4 3h6q.425 0 .713.288T11 4v8q0 .425-.288.713T10 13H4q-.425 0-.712-.288T3 12m10 8v-8q0-.425.288-.712T14 11h6q.425 0 .713.288T21 12v8q0 .425-.288.713T20 21h-6q-.425 0-.712-.288T13 20M3 20v-4q0-.425.288-.712T4 15h6q.425 0 .713.288T11 16v4q0 .425-.288.713T10 21H4q-.425 0-.712-.288T3 20m2-9h4V5H5zm10 8h4v-6h-4zm0-12h4V5h-4zM5 19h4v-2H5zm4-2"/></svg>  Dashboard
                 </div> 
@@ -31,7 +31,7 @@ export default function Dashboard(){
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm4 18H6V4h7v5h5z"/></svg> GST Return Filling
                 </div> 
             </div>
-            <div className="font-sans text-md text-white p-3 ml-5 mt-2 space-y-3">
+            <div className="font-sans text-sm text-white p-3 ml-5 mt-2 space-y-3">
                 <div className="flex gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11.95 18q.525 0 .888-.363t.362-.887t-.362-.888t-.888-.362t-.887.363t-.363.887t.363.888t.887.362m-.9-3.85h1.85q0-.825.188-1.3t1.062-1.3q.65-.65 1.025-1.238T15.55 8.9q0-1.4-1.025-2.15T12.1 6q-1.425 0-2.312.75T8.55 8.55l1.65.65q.125-.45.563-.975T12.1 7.7q.8 0 1.2.438t.4.962q0 .5-.3.938t-.75.812q-1.1.975-1.35 1.475t-.25 1.825M12 22q-2.075 0-3.9-.787t-3.175-2.138T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"/></svg>
                     Help

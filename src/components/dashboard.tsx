@@ -1,3 +1,6 @@
+import Image from 'next/image';
+import logo from '../../public/logo.png';
+
 export default function Dashboard(){
     return(
         <>
@@ -5,7 +8,7 @@ export default function Dashboard(){
         <div className="w-[25%] bg-gradient-to-br rounded-3xl m-2 from-green-900 to-black flex items-left justify-start absolute top-0 bottom-0 flex-col">
             <div className="flex flex-row font-bold text-3xl text-white p-4 m-5">
             <div className="w-12 h-12 rounded-3 ">
-            <img src="/logo.png" alt="logo" />
+            <Image src={logo} alt="logo" />
             </div>
             <div className="font-sans text-xl text-white absolute top-12 left-28 space-y-3">
             Next Payroll

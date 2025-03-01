@@ -1,7 +1,46 @@
+"use client";
 import Image from 'next/image';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
 import logo from '../../../public/logo.png';
 
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
 export default function Signup() {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+
+  // Handle Signup
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      alert("Signup successful! Check your email for verification and further login purpose.");
+      router.push("/");
+    }
+
+    setLoading(false);
+  };
+
     return (
       <>
         <div className="flex h-screen">
@@ -14,6 +53,9 @@ export default function Signup() {
               <h1 className="text-3xl font-bold">Getting Started</h1>
               <p className="text-gray-400">Welcome to Next Pay - Let&apos;s create your account</p>
               <div>
+
+              <form onSubmit={handleSignup} className="mt-5">
+
               <div className="absolute top-24">
                   <label htmlFor="email" className="text-md font-medium text-gray-100">
                     Email
@@ -22,33 +64,42 @@ export default function Signup() {
                     type="email"
                     id="email"
                     name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Your email"
                     required
                   />
                 </div>
+
+
                 <div className="absolute top-44">
                   <label htmlFor="password" className="text-md font-medium text-gray-100">
                     Password
                   </label>
-                  <a href="/forgotpassword" className="absolute top-0 left-60 ml-6 text-sm font-bold text-white">
-                    Forgot?
-                  </a>
                   <input
                     type="password"
                     id="password"
                     name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter your password"
                     required
                   />
                 </div>
+
                 <button
                   type="submit"
                   className="absolute top-64 w-full py-2 px-4 bg-gradient-to-br from-green-700 to-black text-white font-semibold rounded-md shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 >
                   Sign Up
                 </button>
+
+              </form>
+
+              {error && <p className="text-red-500">{error}</p>}
+
                 <p className="text-gray-400 absolute top-72 m-5">
                   Already have an Account?
                   <a href="/login" className="absolute top-0 ml-3 font-bold text-white">

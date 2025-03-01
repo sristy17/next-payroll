@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import logo from '../../../public/logo.png';
-
+import Link from 'next/link'; 
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,13 +12,11 @@ const supabase = createClient(
 );
 
 export default function Signup() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-
 
   // Handle Signup
   const handleSignup = async (e: React.FormEvent) => {
@@ -26,7 +24,7 @@ export default function Signup() {
     setLoading(true);
     setError("");
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -72,7 +70,6 @@ export default function Signup() {
                   />
                 </div>
 
-
                 <div className="absolute top-44">
                   <label htmlFor="password" className="text-md font-medium text-gray-100">
                     Password
@@ -92,42 +89,40 @@ export default function Signup() {
                 <button
                   type="submit"
                   className="absolute top-64 w-full py-2 px-4 bg-gradient-to-br from-green-700 to-black text-white font-semibold rounded-md shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  disabled={loading} 
                 >
-                  Sign Up
+                  {loading ? 'Signing up...' : 'Sign Up'}
                 </button>
-
               </form>
 
               {error && <p className="text-red-500">{error}</p>}
 
-                <p className="text-gray-400 absolute top-72 m-5">
-                  Already have an Account?
-                  <a href="/login" className="absolute top-0 ml-3 font-bold text-white">
-                    Login
-                  </a>
-                </p>
-              </div>
+              <p className="text-gray-400 absolute top-72 m-5">
+                Already have an Account?
+                <Link href="/login" className="absolute top-0 ml-3 font-bold text-white">
+                  Login
+                </Link>
+              </p>
             </div>
-          </div>
-  
-          {/* Right Section */}
-          <div className="w-[45%] bg-gradient-to-br rounded-3xl m-2 from-green-900 to-black flex items-right justify-end absolute right-0 top-0 bottom-0">
-            <div className="absolute top-16 left-10">
-            <h1 className="font-extrabold text-white text-6xl">
-              Enter 
-             <span className="block">the Future</span>
-             <span className="block"> of Payments,</span>
-             <span className="block">today</span>
-            </h1>
-            </div>
-
-            <div className="absolute top-80 left-96 mt-10 w-48 h-48 rounded-3 mb-5">
-              <Image src={logo} alt="logo" />
-            </div>
-          
-
           </div>
         </div>
-      </>
-    );
+
+        {/* Right Section */}
+        <div className="w-[45%] bg-gradient-to-br rounded-3xl m-2 from-green-900 to-black flex items-right justify-end absolute right-0 top-0 bottom-0">
+          <div className="absolute top-16 left-10">
+            <h1 className="font-extrabold text-white text-6xl">
+              Enter 
+              <span className="block">the Future</span>
+              <span className="block"> of Payments,</span>
+              <span className="block">today</span>
+            </h1>
+          </div>
+
+          <div className="absolute top-80 left-96 mt-10 w-48 h-48 rounded-3 mb-5">
+            <Image src={logo} alt="logo" />
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }

@@ -1,7 +1,51 @@
+"use client";
 import Image from 'next/image';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
 import logo from '../../../public/logo.png';
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
 export default function Login() {
+
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+    const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    const { data: user, error: fetchError } = await supabase
+      .from("User")
+      .select("email, password")
+      .eq("email", email)
+      .single();
+
+    if (fetchError || !user) {
+      setError("User not found. Please confirm your email or sign up.");
+      return;
+    }
+
+     // Authenticate user using Supabase auth
+     const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError("Invalid credentials. Please confirm your email and try again.");
+      return;
+    }
+    router.push("/");
+  
+  };
+
     return (
       <>
         <div className="flex h-screen">
@@ -15,7 +59,10 @@ export default function Login() {
               <h1 className="text-3xl font-bold">Getting Started</h1>
               <p className="text-gray-400">Welcome back to Next Pay - Login to your account</p>
               <div>
-                <div className="absolute top-24">
+
+              <form onSubmit={handleLogin}>
+
+              <div className="absolute top-24">
                   <label htmlFor="email" className="text-md font-medium text-gray-100">
                     Email
                   </label>
@@ -23,11 +70,15 @@ export default function Login() {
                     type="email"
                     id="email"
                     name="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Your email"
-                    required
                   />
                 </div>
+
+
                 <div className="absolute top-44">
                   <label htmlFor="password" className="text-md font-medium text-gray-100">
                     Password
@@ -39,17 +90,28 @@ export default function Login() {
                     type="password"
                     id="password"
                     name="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter your password"
-                    required
                   />
                 </div>
+
+
+                <a href="/">
                 <button
                   type="submit"
                   className="absolute top-64 w-full py-2 px-4 bg-gradient-to-br from-green-700 to-black text-white font-semibold rounded-md shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 >
                   Log In
                 </button>
+                </a>
+
+              </form>
+
+              {error && <p className="text-red-500 absolute top-72">{error}</p>}
+               
                 <p className="text-gray-400 absolute top-72 m-5">
                   Do not have an Account?
                   <a href="/signup" className="absolute top-0 ml-3 font-bold text-white">

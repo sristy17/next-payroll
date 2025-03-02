@@ -33,7 +33,7 @@ export default function Signup() {
       setError(error.message);
     } else {
       alert("Signup successful! Check your email for verification and further login purpose.");
-      router.push("/");
+      router.push("/dashboard");
     }
 
     setLoading(false);

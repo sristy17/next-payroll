@@ -43,7 +43,7 @@ export default function Login() {
       setError("Invalid credentials. Please confirm your email and try again.");
       return;
     }
-    router.push("/");
+    router.push("/dashboard");
   };
 
     return (

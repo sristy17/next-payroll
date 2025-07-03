@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import logo from '../../public/logo.png';
+import logo from '@/public/logo.png';
 import Link from 'next/link';
 
 export default function Dashboard() {

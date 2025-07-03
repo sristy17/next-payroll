@@ -1,79 +1,76 @@
-import NextAuth, { NextAuthOptions, Session as NextAuthSession } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { SupabaseAdapter } from "@auth/supabase-adapter";
-import { createClient } from "@supabase/supabase-js";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { JWT } from "next-auth/jwt";
+import { supabase } from "@/helpers/supabase";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-interface Session extends NextAuthSession {
-  supabaseAccessToken?: string;
+/**
+ * Registers a new user with email and password.
+ * @param {string} email - The user's email address.
+ * @param {string} password - The user's chosen password.
+ * @returns {Promise<{ user: import('@supabase/supabase-js').User | null, error: import('@supabase/supabase-js').ApiError | null }>} An object containing the user data or an error.
+ */
+export async function signUp(email: string, password: string) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+  return { user: data.user, error };
 }
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
-          throw new Error("Missing email or password");
-        }
+/**
+ * Logs in a user with email and password.
+ * @param {string} email - The user's email address.
+ * @param {string} password - The user's password.
+ * @returns {Promise<{ user: import('@supabase/supabase-js').User | null, error: import('@supabase/supabase-js').ApiError | null }>} An object containing the user data or an error.
+ */
+export async function signIn(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  return { user: data.user, error };
+}
 
-        const { data: user, error } = await supabase
-          .from("User")
-          .select("id, email, password")
-          .eq("email", credentials.email)
-          .single();
+/**
+ * Logs out the current user.
+ * @returns {Promise<{ error: import('@supabase/supabase-js').ApiError | null }>} An object containing an error if logout fails.
+ */
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+  return { error };
+}
 
-        if (error || !user) {
-          throw new Error("Invalid credentials");
-        }
+/**
+ * Retrieves the current authenticated user's session.
+ * @returns {Promise<{ session: import('@supabase/supabase-js').Session | null, error: import('@supabase/supabase-js').ApiError | null }>} An object containing the current session or an error.
+ */
+export async function getSession() {
+  const { data, error } = await supabase.auth.getSession();
+  return { session: data.session, error };
+}
 
-        const hashedPassword = hashPassword(credentials.password);
-        if (user.password !== hashedPassword) {
-          throw new Error("Incorrect password");
-        }
+/**
+ * Retrieves the current authenticated user.
+ * @returns {Promise<{ user: import('@supabase/supabase-js').User | null, error: import('@supabase/supabase-js').ApiError | null }>} An object containing the current user or an error.
+ */
+export async function getUser() {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  return { user, error };
+}
 
-        return { id: user.id, email: user.email };
-      },
-    }),
-  ],
-  adapter: SupabaseAdapter({
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    secret: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-  }),
-  callbacks: {
-    async session({ session, token }: { session: Session; token: JWT }) {
-      const signingSecret = process.env.SUPABASE_JWT_SECRET;
-      if (signingSecret) {
-        const payload: JwtPayload = {
-          aud: "authenticated",
-          exp: Math.floor(new Date(session.expires).getTime() / 1000),
-          sub: token.sub as string,
-          email: token.email as string,
-          role: "authenticated",
-        };
-        session.supabaseAccessToken = jwt.sign(payload, signingSecret);
-      }
-      return session;
-    },
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/auth/login",
-  },
-};
-
-export default NextAuth(authOptions);
-
-function hashPassword(password: string): string {
-  return password; 
+/**
+ * A utility function to get the Supabase access token from the current session.
+ * This is useful for making authenticated requests to Supabase PostgREST API directly.
+ * @returns {Promise<string | null>} The Supabase access token or null if no session.
+ */
+export async function getSupabaseAccessToken(): Promise<string | null> {
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
+  if (error) {
+    console.error("Error getting session for access token:", error.message);
+    return null;
+  }
+  return session?.access_token ?? null;
 }

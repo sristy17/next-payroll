@@ -1,125 +1,98 @@
 "use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useState } from "react";
-import toast from "react-hot-toast"; // Import toast
 import { signUp } from "@/app/api/auth/auth";
+import toast from "react-hot-toast";
 
-export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // Removed `error` and `message` states, as toast handles messages
+export default function SignupPage() {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState(false);
-
-  /**
-   * Handles the user registration process using the signUp API.
-   * @param {React.FormEvent} e - The form event.
-   */
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    const { user, error: authError } = await signUp(email, password);
+    const defaultName = email.split("@")[0] || "New User";
 
-    if (authError) {
-      toast.error(`Signup failed: ${authError.message}`);
+    const { user, error } = await signUp(defaultName, email, password);
+
+    if (error) {
+      toast.error(`Could not sign-up: ${error.message}`, {
+        id: "sign-up",
+      });
     } else if (user) {
-      toast.success("Account created successfully. Please Login.");
+      toast.success("Sign-up Success", {
+        id: "sign-up",
+      });
     }
     setLoading(false);
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Left Section */}
-      <div className="w-1/2 flex items-center justify-center relative">
-        <div className="absolute top-28 left-32 w-28 h-28 rounded-3 mb-5">
-          <Image src={"/logo.png"} width="64" height="64" alt="logo" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+      <div className="w-full max-w-sm p-8 rounded-lg shadow-lg">
+        <div className="flex flex-col items-center mb-6">
+          <Image
+            src={"/logo.png"}
+            alt="Next Pay Logo"
+            width={120}
+            height={40}
+            priority
+          />
         </div>
-        <div className="absolute left-36 top-60">
-          <h1 className="text-3xl font-bold">Join Next Pay</h1>
-          <p className="text-gray-400">Create your new account</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Get Started</h1>
+        <p className="text-gray-600 mb-6 text-sm">
+          Welcome to Next Pay, let&apos;s create your account
+        </p>
+        <form onSubmit={handleSignUp} className="space-y-4">
           <div>
-            <form onSubmit={handleSignup}>
-              <div className="absolute top-24">
-                <label
-                  htmlFor="email"
-                  className="text-md font-medium text-gray-100"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Your email"
-                />
-              </div>
-
-              <div className="absolute top-44">
-                <label
-                  htmlFor="password"
-                  className="text-md font-medium text-gray-100"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Choose a strong password"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="absolute top-64 w-full py-2 px-4 bg-gradient-to-br from-green-700 to-black text-white font-semibold rounded-md shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                disabled={loading}
-              >
-                {loading ? "Signing Up..." : "Sign Up"}
-              </button>
-            </form>
-
-            {/* Removed the static error/message <p> tags */}
-            {/* {error && <p className="text-red-500 absolute top-72">{error}</p>}
-            {message && <p className="text-green-500 absolute top-72">{message}</p>} */}
-
-            <p className="text-gray-400 absolute top-72 m-5">
-              Already have an Account?
-              <Link
-                href="/auth/login"
-                className="absolute top-0 ml-3 font-bold text-white"
-              >
-                Login
-              </Link>
-            </p>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+            />
           </div>
-        </div>
-      </div>
+          <div>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+            />
+            <div className="text-right mt-2">
+              <Link
+                href="#"
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          </div>
 
-      {/* Right Section */}
-      <div className="w-[45%] bg-gradient-to-br rounded-3xl m-2 from-green-900 to-black flex items-right justify-end absolute right-0 top-0 bottom-0">
-        <div className="absolute top-16 left-10">
-          <h1 className="font-extrabold text-white text-6xl">
-            Enter
-            <span className="block">the Future</span>
-            <span className="block"> of Payments,</span>
-            <span className="block">today</span>
-          </h1>
-        </div>
-
-        <div className="absolute top-80 left-96 mt-10 w-48 h-48 rounded-3 mb-5">
-          <Image src={"/logo.png"} width="64" height="64" alt="logo" />
-        </div>
+          <Button
+            type="submit"
+            className="w-full py-2 rounded-md font-semibold text-white
+                       bg-gradient-to-r from-green-800 to-green-600
+                       hover:from-green-700 hover:to-green-500
+                       focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
+                       transition-all duration-200 ease-in-out"
+            disabled={loading}
+          >
+            {loading ? "Signing up..." : "Signup"}
+          </Button>
+        </form>
       </div>
     </div>
   );

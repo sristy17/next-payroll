@@ -1,130 +1,147 @@
 "use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast"; // Import toast
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import toast from "react-hot-toast";
 import { signIn } from "@/app/api/auth/auth";
 
-export default function Login() {
+export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   /**
    * Handles the user login process using the signIn API.
    * @param {React.FormEvent} e - The form event.
    */
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    const { user, error: authError } = await signIn(email, password);
+    const { user, error } = await signIn(email, password);
 
-    if (authError) {
-      toast.error("Invalid credentials. Please check your email and password.");
+    if (error) {
+      toast.error(
+        error.message ||
+          "Invalid credentials. Please check your email and password.",
+        {
+          id: "login-error",
+        }
+      );
     } else if (user) {
-      toast.success("Login successful!");
+      toast.success("Login successful!", {
+        id: "login-success",
+      });
       router.push("/dashboard");
     }
     setLoading(false);
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Left Section */}
-      <div className="w-1/2 flex items-center justify-center relative">
-        <div className="absolute top-28 left-32 w-28 h-28 rounded-3 mb-5">
-        </div>
-        <div className="absolute left-36 top-60">
-          <h1 className="text-3xl font-bold">Getting Started</h1>
-          <p className="text-gray-400">
-            Welcome back to Next Pay - Login to your account
-          </p>
-          <div>
-            <form onSubmit={handleLogin}>
-              <div className="absolute top-24">
-                <label
-                  htmlFor="email"
-                  className="text-md font-medium text-gray-100"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Your email"
-                />
-              </div>
-
-              <div className="absolute top-44">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
+      {" "}
+      <div className="flex-1 flex items-center justify-center p-4 md:p-8 relative">
+        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg relative z-10">
+          {" "}
+          <div className="flex flex-col items-center mb-6">
+            <Image
+              src={"/logo.png"}
+              alt="Next Pay Logo"
+              width={120}
+              height={40}
+              priority
+            />
+            <h1 className="text-3xl font-bold text-gray-900">
+              Getting Started
+            </h1>
+            <p className="text-gray-600 text-sm">
+              Welcome back to Next Pay - Login to your account
+            </p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Email
+              </label>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Your email"
+                className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+              />
+            </div>
+            <div>
+              <div className="flex justify-between items-center mb-1">
                 <label
                   htmlFor="password"
-                  className="text-md font-medium text-gray-100"
+                  className="block text-sm font-medium text-gray-700"
                 >
                   Password
                 </label>
                 <Link
                   href="/forgotpassword"
-                  className="absolute top-0 left-60 ml-6 text-sm font-bold text-white"
+                  className="text-sm font-medium text-blue-600 hover:underline"
                 >
-                  Forgot?
+                  Forgot password?
                 </Link>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 bg-transparent w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your password"
-                />
               </div>
-
-              <button
-                type="submit"
-                className="absolute top-64 w-full py-2 px-4 bg-gradient-to-br from-green-700 to-black text-white font-semibold rounded-md shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                disabled={loading}
-              >
-                {loading ? "Logging In..." : "Log In"}
-              </button>
-            </form>
-
-            {/* Removed the static error message <p> tag */}
-            {/* {error && <p className="text-red-500 absolute top-72">{error}</p>} */}
-
-            <p className="text-gray-400 absolute top-72 m-5">
-              Do not have an Account?
-              <Link
-                href="/signup"
-                className="absolute top-0 ml-3 font-bold text-white"
-              >
-                Signup
-              </Link>
-            </p>
-          </div>
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+              />
+            </div>
+            <Button
+              type="submit"
+              className="w-full py-2 rounded-md font-semibold text-white
+                         bg-gradient-to-r from-green-800 to-green-600
+                         hover:from-green-700 hover:to-green-500
+                         focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
+                         transition-all duration-200 ease-in-out"
+              disabled={loading}
+            >
+              {loading ? "Logging In..." : "Log In"}
+            </Button>
+          </form>
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Do not have an Account?{" "}
+            <Link
+              href="/signup"
+              className="font-semibold text-blue-600 hover:underline"
+            >
+              Signup
+            </Link>
+          </p>
         </div>
       </div>
-
-      {/* Right Section */}
-      <div className="w-[45%] bg-gradient-to-br rounded-3xl m-2 from-green-900 to-black flex items-right justify-end absolute right-0 top-0 bottom-0">
-        <div className="absolute top-16 left-10">
-          <h1 className="font-extrabold text-white text-6xl">
+      <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-green-900 to-black rounded-l-3xl p-8 items-center justify-center relative overflow-hidden">
+        <div className="text-white text-center md:text-left">
+          <h1 className="font-extrabold text-4xl lg:text-5xl xl:text-6xl leading-tight">
             Enter
             <span className="block">the Future</span>
             <span className="block"> of Payments,</span>
             <span className="block">today</span>
           </h1>
         </div>
-
-        <div className="absolute top-80 left-96 mt-10 w-48 h-48 rounded-3 mb-5">
-        </div>
+        <div className="absolute -bottom-20 -right-20 w-60 h-60 rounded-full bg-green-700 opacity-20 filter blur-3xl"></div>
+        <div className="absolute top-10 -left-10 w-40 h-40 rounded-full bg-green-500 opacity-15 filter blur-3xl"></div>
       </div>
     </div>
   );

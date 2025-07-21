@@ -1,11 +1,5 @@
-import Dashboard from '../../components/dashboard';
-import Navbar from '../../components/navbar';
+import Sidebar from "@/components/sidebar";
 
-export default function Itr4(){
-    return(
-        <>
-       <Dashboard />
-       <Navbar />
-        </>
-    )
+export default function Itr4() {
+  return <Sidebar />;
 }

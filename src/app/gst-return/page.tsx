@@ -1,11 +1,7 @@
-import Dashboard from '../../components/dashboard';
-import Navbar from '../../components/navbar';
+import Sidebar from '@/components/sidebar';
 
 export default function GstReturn(){
     return(
-        <>
-       <Dashboard />
-       <Navbar />
-        </>
+       <Sidebar />
     )
 }

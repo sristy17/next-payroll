@@ -9,6 +9,8 @@ import {
   Dot,
   MoreHorizontal,
 } from "lucide-react";
+import { getSession } from "@/app/api/auth/auth";
+import { useState, useEffect } from "react";
 
 const mockTransactions = [
   {
@@ -63,9 +65,23 @@ const mockTaxFilings = [
 ];
 
 export default function DashboardPage() {
+  const [username, setUserName] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    async function fetchSession() {
+      const { session, error } = await getSession();
+      if (session && error === null) {
+        setUserName(session.name);
+      }
+    }
+    fetchSession();
+  }, []);
+
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Hello, Anna!</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+        Hello, {username} !
+      </h1>
       <p className="text-gray-600 mb-8">
         Send and receive funds with pleasure.
       </p>

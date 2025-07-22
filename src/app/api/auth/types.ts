@@ -1,9 +1,8 @@
-
 export interface User {
-  id: string; 
+  id: string;
   name: string;
   email: string;
-  is_email_verified: boolean; 
+  is_email_verified: boolean;
   profilePic: string | null;
   created_at: string;
   updated_at: string;
@@ -12,4 +11,5 @@ export interface User {
 export interface UserSession {
   userId: string;
   email: string;
+  name?: string;
 }

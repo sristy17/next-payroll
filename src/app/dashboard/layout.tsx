@@ -45,8 +45,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("useEffect running");
-
     async function fetchSession() {
       const { session, error } = await getSession();
       if (session && error === null) {
@@ -105,15 +103,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <p className="text-gray-400 text-sm">{userEmail}</p>
             </div>
           </div>
-          <Button
-            className="w-full mt-4 bg-green-700 text-white"
-            onClick={async () => {
-              await signOut();
-              router.push("/auth/login");
-            }}
-          >
-            Logout
-          </Button>
+          {userEmail && username ? (
+            <Button
+              className="w-full mt-4 bg-green-700 text-white"
+              onClick={async () => {
+                await signOut();
+                router.push("/auth/login");
+              }}
+            >
+              Logout
+            </Button>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
 
@@ -144,7 +146,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
           </div>
         </header>
-          
+
         {children}
       </div>
     </div>

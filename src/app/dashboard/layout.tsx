@@ -18,6 +18,10 @@ import {
   Bell,
 } from "lucide-react";
 
+import { getSession, signOut } from "@/app/api/auth/auth";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -36,17 +40,34 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
+  const [username, setUserName] = useState<string | undefined>(undefined);
+  const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log("useEffect running");
+
+    async function fetchSession() {
+      const { session, error } = await getSession();
+      if (session && error === null) {
+        setUserName(session.name);
+        setUserEmail(session.email);
+      }
+    }
+    fetchSession();
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="w-[250px] bg-gradient-to-br from-green-900 to-black m-2 rounded-3xl flex flex-col p-6 sticky top-2 bottom-2 self-start max-h-[calc(100vh-1rem)] overflow-y-auto">
-        <div className="flex items-center mb-10 mt-2">
+        <div className="flex items-center mb-10 mt-2 gap-3">
           <Image
             src={"/logo.png"}
             alt="Next Pay Logo"
             width={40}
             height={40}
             priority
-            className="mr-3"
+            className="shrink-0"
           />
           <span className="font-bold text-2xl text-white">Next Pay</span>
         </div>
@@ -59,7 +80,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               className={`flex items-center gap-3 p-3 rounded-lg text-white font-medium transition-colors duration-200
                 ${
                   isActive(item.href)
-                    ? "bg-white text-green-900"
+                    ? "text-green-900"
                     : "hover:bg-green-800/50"
                 }
               `}
@@ -80,10 +101,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               className="rounded-full border-2 border-white"
             />
             <div>
-              <p className="text-white font-semibold">Bisler Pandey</p>
-              <p className="text-gray-400 text-sm">bisler.pandey@gmail.com</p>
+              <p className="text-white font-semibold">{username}</p>
+              <p className="text-gray-400 text-sm">{userEmail}</p>
             </div>
           </div>
+          <Button
+            className="w-full mt-4 bg-green-700 text-white"
+            onClick={async () => {
+              await signOut();
+              router.push("/auth/login");
+            }}
+          >
+            Logout
+          </Button>
         </div>
       </div>
 
@@ -105,7 +135,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
             <div className="flex items-center cursor-pointer">
               <Image
-                src="/user-avatar-small.png"
+                src="/user-avatar.png"
                 alt="User Avatar"
                 width={32}
                 height={32}
@@ -114,7 +144,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
           </div>
         </header>
-
+          
         {children}
       </div>
     </div>

@@ -78,7 +78,6 @@ export async function signIn(
       )
       .eq("email", email)
       .single();
-
     if (supabaseError || !userFromDb) {
       return {
         user: null,
@@ -162,8 +161,17 @@ export async function getSession(): Promise<{
       const userId = localStorage.getItem("user_session_id");
       const userEmail = localStorage.getItem("user_session_email");
 
+      const { data } = await supabase
+        .from("users")
+        .select("name")
+        .eq("id", userId)
+        .single();
+
       if (userId && userEmail) {
-        return { session: { userId, email: userEmail }, error: null };
+        return {
+          session: { userId, email: userEmail, name: data?.name },
+          error: null,
+        };
       }
     }
     return { session: null, error: null };

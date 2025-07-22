@@ -7,11 +7,14 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { signUp } from "@/app/api/auth/auth";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +32,7 @@ export default function SignupPage() {
       toast.success("Sign-up Success", {
         id: "sign-up",
       });
+      router.push("/auth/login");
     }
     setLoading(false);
   };
@@ -93,6 +97,15 @@ export default function SignupPage() {
             {loading ? "Signing up..." : "Signup"}
           </Button>
         </form>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Have an Account?{" "}
+          <Link
+            href="/auth/login"
+            className="font-semibold text-blue-600 hover:underline"
+          >
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );

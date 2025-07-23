@@ -85,7 +85,7 @@ When submitting a Pull Request, please:
 
 ## Code Style
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling. While there are no strict linters enforced yet, please try to maintain consistency with the existing code style. We recommend using an IDE extension for [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) if you have them configured, to help with code formatting.
+This project uses [Tailwind CSS](https://tailwindcss.com/) for styling. While there are no strict linters enforced yet, please try to maintain consistency with the existing code style. 
 
 ## Testing
 

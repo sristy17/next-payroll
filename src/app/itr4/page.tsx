@@ -10,7 +10,6 @@ import GenerateButton from '@/components/GenerateButton';
 export default function Itr4() {
 
   const [username, setUserName] = useState<string | undefined>(undefined);
-  const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const [showPending, setShowPending] = useState(false);
 
   useEffect(() => {
@@ -18,7 +17,6 @@ export default function Itr4() {
       const { session, error } = await getSession();
       if (session && error === null) {
         setUserName(session.name);
-        setUserEmail(session.email);
       }
     }
     fetchSession();
@@ -26,7 +24,7 @@ export default function Itr4() {
   
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar username={username} userEmail={userEmail} />
+      <Sidebar />
       <div className="flex-1 flex flex-col" style={{paddingLeft: 40, paddingRight: 32, paddingTop: 32, paddingBottom: 0}}>
         <header className="flex items-center w-full mb-8" style={{gap: 0}}>
           <div className="relative flex items-center w-80" style={{minWidth: 320}}>

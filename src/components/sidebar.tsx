@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+
 import {
   LayoutDashboard,
   Wallet,
@@ -11,12 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 
-interface SidebarProps {
-  username?: string;
-  userEmail?: string;
-}
-
-export default function Sidebar({ username, userEmail }: SidebarProps) {
+export default function Dashboard() {
   const pathname = usePathname();
   const isActive = (path: string) => pathname === path;
 
@@ -73,8 +69,8 @@ export default function Sidebar({ username, userEmail }: SidebarProps) {
             className="rounded-full border-2 border-white"
           />
           <div>
-            <p className="text-white font-semibold">{username || "Bisleri Pandey"}</p>
-            <p className="text-gray-400 text-sm">{userEmail || "bisleri.pandey@gmail.com"}</p>
+            <p className="text-white font-semibold">Bisler Pandey</p>
+            <p className="text-gray-400 text-sm">bisler.pandey@gmail.com</p>
           </div>
         </div>
       </div>

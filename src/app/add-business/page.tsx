@@ -2,13 +2,12 @@
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bell, ArrowLeft, Building2, MapPin, Phone, Mail, Calendar, User, Briefcase } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getSession } from "../api/auth/auth";
+import { Bell, ArrowLeft, Building2, MapPin, Calendar, User, Briefcase } from "lucide-react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function AddBusiness() {
-  const [username, setUserName] = useState<string | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -30,16 +29,6 @@ export default function AddBusiness() {
     establishedDate: "",
     description: ""
   });
-
-  useEffect(() => {
-    async function fetchSession() {
-      const { session, error } = await getSession();
-      if (session && error === null) {
-        setUserName(session.name);
-      }
-    }
-    fetchSession();
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -91,7 +80,7 @@ export default function AddBusiness() {
             </Button>
             <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
             <div className="flex items-center cursor-pointer">
-              <img src="/user-avatar.png" alt="User Avatar" width={32} height={32} className="rounded-full" />
+              <Image src="/user-avatar.png" alt="User Avatar" width={32} height={32} className="rounded-full" />
             </div>
           </div>
         </header>

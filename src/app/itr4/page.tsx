@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { getSession } from "../api/auth/auth";
 import GenerateButton from '@/components/GenerateButton';
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Itr4() {
 
@@ -47,7 +48,7 @@ export default function Itr4() {
             </Button>
             <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
             <div className="flex items-center cursor-pointer">
-              <img src="/user-avatar.png" alt="User Avatar" width={32} height={32} className="rounded-full" />
+              <Image src="/user-avatar.png" alt="User Avatar" width={32} height={32} className="rounded-full" />
             </div>
           </div>
         </header>

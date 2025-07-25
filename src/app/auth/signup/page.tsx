@@ -8,10 +8,13 @@ import Link from "next/link";
 import { signUp } from "@/app/api/auth/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignupPage() {
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
@@ -20,12 +23,18 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
 
-    const defaultName = email.split("@")[0] || "New User";
+    if (!email.includes("@")) {
+      toast.error("Please enter a valid email");
+      setLoading(false);
+      return;
+    }
 
-    const { user, error } = await signUp(defaultName, email, password);
+    const displayName = name || email.split("@")[0];
+
+    const { user, error } = await signUp(displayName, email, password);
 
     if (error) {
-      toast.error(`Could not sign-up: ${error.message}`, {
+      toast.error(Could not sign-up: ${error.message}, {
         id: "sign-up",
       });
     } else if (user) {
@@ -38,8 +47,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <div className="w-full max-w-sm p-8 rounded-lg shadow-lg">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
+      <div className="w-full max-w-md p-8 rounded-2xl shadow-xl bg-white">
         <div className="flex flex-col items-center mb-6">
           <Image
             src={"/logo.png"}
@@ -50,31 +59,45 @@ export default function SignupPage() {
           />
         </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Get Started</h1>
-        <p className="text-gray-600 mb-6 text-sm">
+        <p className="text-gray-600 mb-6 text-sm text-center">
           Welcome to Next Pay, let&apos;s create your account
         </p>
         <form onSubmit={handleSignUp} className="space-y-4">
-          <div>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
-            />
-          </div>
-          <div>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
+          <Input
+            id="email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
+          <div className="relative">
             <Input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+              className="border-gray-300 focus:border-green-500 focus:ring-green-500 pr-10"
             />
+            <button
+              type="button"
+              className="absolute right-2 top-2/4 -translate-y-1/2 text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
             <div className="text-right mt-2">
               <Link
                 href="#"
@@ -84,17 +107,42 @@ export default function SignupPage() {
               </Link>
             </div>
           </div>
-
           <Button
             type="submit"
-            className="w-full py-2 rounded-md font-semibold text-white
-                       bg-gradient-to-r from-green-800 to-green-600
-                       hover:from-green-700 hover:to-green-500
-                       focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
-                       transition-all duration-200 ease-in-out"
+            className="w-full py-2 rounded-xl font-semibold text-white
+              bg-gradient-to-r from-green-700 to-green-500
+              hover:from-green-600 hover:to-green-400
+              focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50
+              transition-all duration-200 ease-in-out"
             disabled={loading}
           >
-            {loading ? "Signing up..." : "Signup"}
+            {loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                <span>Signing up...</span>
+              </div>
+            ) : (
+              "Signup"
+            )}
           </Button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">

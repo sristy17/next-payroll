@@ -1,21 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { ClockFading } from "lucide-react";
 
 export default function GenerateButton() {
   const router = useRouter();
   return (
     <div className="w-full min-h-[520px] py-16 flex flex-col items-center justify-center bg-gradient-to-br from-[#0A2416] to-[#11432D] rounded-3xl shadow-2xl shadow-black/20">
-      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-12">
-        {/* Left semicircle broken into arcs */}
-        <path d="M60 20 A40 40 0 0 0 20 60" stroke="#fff" strokeWidth="8" fill="none" opacity="0.3" strokeDasharray="18 14" />
-        <path d="M20 60 A40 40 0 0 0 60 100" stroke="#fff" strokeWidth="8" fill="none" opacity="0.3" strokeDasharray="18 14" />
-        {/* Right semicircle solid */}
-        <path d="M60 100 A40 40 0 0 0 100 60 A40 40 0 0 0 60 20" stroke="#fff" strokeWidth="8" fill="none" />
-        {/* Clock hand */}
-        <line x1="60" y1="60" x2="60" y2="38" stroke="#fff" strokeWidth="7" strokeLinecap="round" />
-        <line x1="60" y1="60" x2="80" y2="70" stroke="#fff" strokeWidth="7" strokeLinecap="round" />
-        <circle cx="60" cy="60" r="6" fill="#fff" />
-      </svg>
+      <ClockFading size={120} strokeWidth={2.5} className="mb-12 text-white/80" />
       <div className="text-center">
         <div className="text-white font-bold text-lg md:text-xl mb-8">
           You’ve requested for the generation of GST Return Filling Report

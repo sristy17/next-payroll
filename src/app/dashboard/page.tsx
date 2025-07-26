@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import StatisticsSection from './StatisticsSection';
+
 
 import {
   ChevronRight,
@@ -218,10 +220,7 @@ export default function DashboardPage() {
 
       <div className="bg-white p-6 rounded-lg shadow-sm mt-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Statistics</h2>
-        <div className="w-full h-64 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-          [Graph Placeholder - Integrate your charting library here, e.g.,
-          Chart.js, Recharts, or a custom SVG]
-        </div>
+        <StatisticsSection />
         <div className="flex justify-center items-center space-x-6 mt-4 text-sm">
           <div className="flex items-center">
             <Dot className="w-6 h-6 text-purple-600" />

@@ -150,8 +150,8 @@ export default function StatisticsSection() {
                             key={p}
                             onClick={() => setPeriod(p)}
                             className={`capitalize ${period === p
-                                    ? 'bg-[#15803d] text-white hover:bg-[#166f36]'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-[#15803d] text-white hover:bg-[#166f36]'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             {p}
@@ -180,9 +180,9 @@ export default function StatisticsSection() {
                 </div>
 
                 {/* Area + Pie side-by-side */}
-                <div className="flex flex-col lg:flex-row gap-4 flex-1">
+                <div className="flex flex-col lg:flex-row gap-4">
                     {/* Area Chart */}
-                    <div className="flex-1">
+                    <div className="w-full lg:w-1/2">
                         <h3 className="text-md font-semibold text-gray-700 mb-2">Savings Trend</h3>
                         <ResponsiveContainer width="100%" height={250}>
                             <AreaChart data={chartData}>
@@ -208,21 +208,21 @@ export default function StatisticsSection() {
                     </div>
 
                     {/* Pie Chart */}
-                    <div className="min-w-[350px] flex-1 flex items-center justify-center p-4">
-                        <div>
+                    <div className="w-full lg:w-1/2 flex items-center justify-center">
+                        <div className="w-full max-w-[350px]">
                             <h3 className="text-md font-semibold text-gray-700 mb-2 text-center">Spending Categories</h3>
-                            <ResponsiveContainer width={340} height={340}>
+                            <ResponsiveContainer width="100%" height={250}>
                                 <PieChart>
                                     <Pie
                                         data={spendingBreakdown}
                                         dataKey="value"
                                         cx="50%"
                                         cy="50%"
-                                        innerRadius={70}
-                                        outerRadius={130}
+                                        innerRadius={60}
+                                        outerRadius={100}
                                         label={renderCustomLabel}
-                                        labelLine={true}
-                                        isAnimationActive={true}
+                                        labelLine={false}
+                                        isAnimationActive
                                     >
                                         {spendingBreakdown.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -234,6 +234,7 @@ export default function StatisticsSection() {
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     );

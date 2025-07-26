@@ -221,7 +221,7 @@ export default function GstReturn() {
                 <ul className="list-disc pl-4 text-blue-800 text-sm space-y-1">
                   <li>All transaction data is monitored in real-time for GST compliance</li>
                   <li>Returns are automatically filed 2 days before the due date</li>
-                  <li>You'll receive email and SMS notifications for all filing activities</li>
+                  <li>You&apos;ll receive email and SMS notifications for all filing activities</li>
                   <li>Historical data is available for audit and review purposes</li>
                 </ul>
               </div>
@@ -229,7 +229,7 @@ export default function GstReturn() {
           </div>
 
           <p className="text-gray-900 font-semibold mb-4">
-            By using Next PAY's automated GST filing, you benefit from:
+            By using Next PAY&apos;s automated GST filing, you benefit from:
           </p>
           <ul className="list-disc pl-6 text-gray-600 mb-8">
             <li>Complete elimination of manual GST return preparation</li>

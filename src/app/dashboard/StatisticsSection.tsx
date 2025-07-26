@@ -17,6 +17,28 @@ import {
 } from 'recharts';
 
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+
+enum TimePeriod {
+    Weekly = 'weekly',
+    Monthly = 'monthly',
+    Yearly = 'yearly',
+}
+
+enum Month {
+    Jan = 'Jan',
+    Feb = 'Feb',
+    Mar = 'Mar',
+    Apr = 'Apr',
+    May = 'May',
+    Jun = 'Jun',
+    Jul = 'Jul',
+    Aug = 'Aug',
+    Sep = 'Sep',
+    Oct = 'Oct',
+    Nov = 'Nov',
+    Dec = 'Dec',
+}
 
 type FinancialRecord = {
     name: string;
@@ -32,8 +54,8 @@ type PieCategory = {
 
 const COLORS = ['#845ef7', '#ef4444', '#10b981', '#facc15', '#3b82f6'];
 
-const generateDataByPeriod = (period: 'weekly' | 'monthly' | 'yearly'): FinancialRecord[] => {
-    if (period === 'weekly') {
+const generateDataByPeriod = (period: TimePeriod): FinancialRecord[] => {
+    if (period === TimePeriod.Weekly) {
         return [
             { name: 'Week 1', income: 200, expenses: 100, savings: 100 },
             { name: 'Week 2', income: 300, expenses: 150, savings: 150 },
@@ -42,8 +64,8 @@ const generateDataByPeriod = (period: 'weekly' | 'monthly' | 'yearly'): Financia
         ];
     }
 
-    if (period === 'monthly') {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    if (period === TimePeriod.Monthly) {
+        const months = Object.values(Month);
         return months.map((month, idx) => ({
             name: month,
             income: 700 + idx * 20,
@@ -52,7 +74,7 @@ const generateDataByPeriod = (period: 'weekly' | 'monthly' | 'yearly'): Financia
         }));
     }
 
-    if (period === 'yearly') {
+    if (period === TimePeriod.Yearly) {
         const currentYear = new Date().getFullYear();
         const startYear = 2020;
         return Array.from({ length: currentYear - startYear + 1 }, (_, i) => {
@@ -76,18 +98,19 @@ const spendingBreakdown: PieCategory[] = [
     { name: 'Utilities', value: 50 },
     { name: 'Other', value: 50 },
 ];
+
 const renderCustomLabel = ({
-    cx,
-    cy,
-    midAngle,
-    outerRadius,
-    percent,
+    cx = 0,
+    cy = 0,
+    midAngle = 0,
+    outerRadius = 0,
+    percent = 0,
 }: {
-    cx: number;
-    cy: number;
-    midAngle: number;
-    outerRadius: number;
-    percent: number;
+    cx?: number;
+    cy?: number;
+    midAngle?: number;
+    outerRadius?: number;
+    percent?: number;
 }) => {
     const RADIAN = Math.PI / 180;
     const radius = outerRadius + 10;
@@ -109,7 +132,7 @@ const renderCustomLabel = ({
 };
 
 export default function StatisticsSection() {
-    const [period, setPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
+    const [period, setPeriod] = useState<TimePeriod>(TimePeriod.Weekly);
     const [chartData, setChartData] = useState<FinancialRecord[]>([]);
 
     useEffect(() => {
@@ -122,18 +145,18 @@ export default function StatisticsSection() {
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-gray-800">Statistics</h2>
                 <div className="flex gap-2">
-                    {['weekly', 'monthly', 'yearly'].map((p) => (
-                        <button
+                    {Object.values(TimePeriod).map((p) => (
+                        <Button
                             key={p}
-                            onClick={() => setPeriod(p as any)}
-                            className={`text-sm px-3 py-1 rounded-full transition ${period === p
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-100 text-gray-700'
+                            onClick={() => setPeriod(p)}
+                            className={`capitalize ${period === p
+                                    ? 'bg-[#15803d] text-white hover:bg-[#166f36]'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
-                            aria-label={`Filter by ${p}`}
                         >
-                            {p.charAt(0).toUpperCase() + p.slice(1)}
-                        </button>
+                            {p}
+                        </Button>
+
                     ))}
                 </div>
             </div>
@@ -197,7 +220,7 @@ export default function StatisticsSection() {
                                         cy="50%"
                                         innerRadius={70}
                                         outerRadius={130}
-label={({ percent }) => `${percent ? (percent * 100).toFixed(0) : 0}%`}
+                                        label={renderCustomLabel}
                                         labelLine={true}
                                         isAnimationActive={true}
                                     >
@@ -210,7 +233,6 @@ label={({ percent }) => `${percent ? (percent * 100).toFixed(0) : 0}%`}
                             </ResponsiveContainer>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

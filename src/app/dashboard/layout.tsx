@@ -105,7 +105,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
           {userEmail && username ? (
             <Button
-              className="w-full mt-4 bg-green-700 text-white"
+              variant="destructive"
+              size="sm"
+              className="w-full mt-4"
               onClick={async () => {
                 await signOut();
                 router.push("/auth/login");
@@ -132,10 +134,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
           <div className="flex items-center space-x-4">
             <Button 
-              className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 flex items-center gap-2"
+              variant="secondary"
+              size="sm"
+              className="bg-green-700 hover:bg-green-600 text-white border-green-700 hover:border-green-600"
               onClick={() => router.push('/add-business')}
             >
-              <Plus className="w-4 h-4" /> Add Business
+              <Plus className="w-4 h-4 mr-2" /> Add Business
             </Button>
             <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
             <div className="flex items-center cursor-pointer">

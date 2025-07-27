@@ -2,7 +2,7 @@
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bell } from "lucide-react";
+import { Bell, Search, Plus, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSession } from "../api/auth/auth";
 import GenerateButton from '@/components/GenerateButton';
@@ -31,7 +31,7 @@ export default function Itr4() {
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
         <header className="flex items-center justify-between mb-8">
           <div className="relative flex items-center w-80">
-            <svg className="absolute left-3 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <Search className="absolute left-3 text-gray-400 w-5 h-5" />
             <Input
               type="text"
               placeholder="Search..."
@@ -41,10 +41,12 @@ export default function Itr4() {
 
           <div className="flex items-center space-x-4">
             <Button 
-              className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 flex items-center gap-2"
+              variant="secondary"
+              size="sm"
+              className="bg-green-700 hover:bg-green-600 text-white border-green-700 hover:border-green-600"
               onClick={() => router.push('/add-business')}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m12 5 0 14m-7-7 14 0"/></svg> Add Business
+              <Plus className="w-4 h-4 mr-2" /> Add Business
             </Button>
             <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
             <div className="flex items-center cursor-pointer">
@@ -88,10 +90,13 @@ export default function Itr4() {
                 <li>Next PAY does not store sensitive financial details such as your PAN, Aadhaar, or bank details beyond the session required for generating the ITR.</li>
               </ul>
               <Button
-                className="w-full bg-green-700 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg mt-6"
+                variant="default"
+                size="lg"
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-4 rounded-xl mt-6 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] border-green-600 hover:border-green-700"
                 onClick={() => setShowPending(true)}
               >
-                + Generate
+                <FileText className="w-5 h-5 mr-2" />
+                Generate ITR-4
               </Button>
             </>
           )}

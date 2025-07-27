@@ -370,8 +370,10 @@ export default function AddBusiness() {
               </Button>
               <Button
                 type="submit"
+                variant="default"
+                size="lg"
                 disabled={isSubmitting}
-                className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl py-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl py-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none border-green-600 hover:border-green-700"
               >
                 <Building2 className="w-4 h-4 mr-2" />
                 {isSubmitting ? "Creating Business..." : "Create Business"}

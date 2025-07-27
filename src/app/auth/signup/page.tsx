@@ -79,13 +79,17 @@ export default function SignupPage() {
                 required
                 className=" flex-grow border-gray-300 focus:border-green-500 focus:ring-green-500"
               />
-              {
-                showPassword ? (
-                  <FaRegEye onClick={() => setShowPassword(false)} className="absolute text-gray-500 cursor-pointer ml-[290px]" />
-                ) : (
-                  <FaRegEyeSlash onClick={() => setShowPassword(true)} className="absolute text-gray-500 cursor-pointer ml-[290px]" />
-                )
-              }
+              {showPassword ? (
+                <FaRegEye
+                  onClick={() => setShowPassword(false)}
+                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                />
+              ) : (
+                <FaRegEyeSlash
+                  onClick={() => setShowPassword(true)}
+                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                />
+              )}
             </div>
 
             <div className="text-right mt-2">

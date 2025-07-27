@@ -43,9 +43,6 @@ export default function SignupPage() {
     }
     setLoading(false);
   };
-
- 
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-sm p-8 rounded-lg shadow-lg">

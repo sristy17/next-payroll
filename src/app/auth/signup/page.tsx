@@ -8,14 +8,18 @@ import Link from "next/link";
 import { signUp } from "@/app/api/auth/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
+
 
 export default function SignupPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
 
   const router = useRouter();
 
@@ -39,7 +43,9 @@ export default function SignupPage() {
     }
     setLoading(false);
   };
+
  
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-sm p-8 rounded-lg shadow-lg">
@@ -69,6 +75,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
+
             <div className="realtive flex items-center justify-between ">
               <Input
                 id="password"
@@ -91,6 +98,17 @@ export default function SignupPage() {
                 />
               )}
             </div>
+
+
+            <Input
+              id="password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+            />
 
             <div className="text-right mt-2">
               <Link

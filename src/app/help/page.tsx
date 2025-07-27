@@ -1,17 +1,30 @@
 'use client';
-
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
 
 export default function HelpCenterPage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const topic1 = {
+  title: 'System Onboarding',
+  desc: 'Set up your business, add users, and start managing payroll with ease.',
+};
+
+const topic2 = {
+  title: 'Payroll & Tax Filing',
+  desc: 'Automate salary disbursement, ITR-1/2, and GST returns with smart workflows.',
+};
+
+const topic3 = {
+  title: 'AI Assistant & Insights',
+  desc: 'Using Gemini AI for personalized tax-saving tips and anomaly detection.',
+};
 
   const faqArticles = [
     {
@@ -55,53 +68,32 @@ export default function HelpCenterPage() {
 
       <div className="text-center mb-8">
         <h2 className="text-2xl font-semibold text-green-800 mb-6">Explore Topics</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center">
-          {[
-            {
-              title: 'System Onboarding',
-              desc: 'Set up your business, add users, and start managing payroll with ease.',
-            },
-            {
-              title: 'Payroll & Tax Filing',
-              desc: 'Automate salary disbursement, ITR-1/2, and GST returns with smart workflows.',
-            },
-            {
-              title: 'AI Assistant & Insights',
-              desc: 'Using Gemini AI for personalized tax-saving tips and anomaly detection.',
-            },
-          ].map((item, idx) => (
-            <Card key={idx} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle>{item.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="text-gray-600">{item.desc}</CardContent>
-            </Card>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h3 className="text-lg font-semibold mb-2">{topic1.title}</h3>
+            <p className="text-gray-600 text-sm">{topic1.desc}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold mb-2">{topic2.title}</h3>
+            <p className="text-gray-600 text-sm">{topic2.desc}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold mb-2">{topic3.title}</h3>
+            <p className="text-gray-600 text-sm">{topic3.desc}</p>
+          </div>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto my-10">
         <h2 className="text-xl font-semibold text-green-800 mb-4">Popular Help Articles</h2>
-        <ul className="space-y-2">
-          {faqArticles.map((faq, index) => (
-            <li key={index} className="border-b pb-2">
-              <div
-                onClick={() => toggle(index)}
-                className="flex justify-between items-center cursor-pointer py-2 text-gray-800 hover:text-green-700 transition"
-              >
-                <span className="font-medium">{faq.question}</span>
-                {openIndex === index ? (
-                  <ChevronUp className="w-4 h-4 text-green-600" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-green-600" />
-                )}
-              </div>
-              {openIndex === index && (
-                <p className="text-sm text-gray-600 mt-1 px-1">{faq.answer}</p>
-              )}
-            </li>
-          ))}
-        </ul>
+          <Accordion type="single" collapsible className="w-full">
+            {faqArticles.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger>{faq.question}</AccordionTrigger>
+                <AccordionContent>{faq.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
       </div>
 
       <div className="text-center mt-12 bg-white py-10 rounded-xl shadow-sm">

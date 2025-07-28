@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+        }
+        .payment-card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .payment-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="payment-card bg-white rounded-xl overflow-hidden p-8 mb-8">
+            <div class="flex justify-center mb-6">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3f3de6a2-3114-42c5-a139-0ffc28af4492.png" alt="Payment Gateway Logo" class="h-12" />
+            </div>
+            
+            <div class="flex items-center justify-center mb-6">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mr-2">Complete Your Payment</h2>
+                <div class="relative">
+                    <div id="serverStatus" class="w-3 h-3 rounded-full bg-gray-300"></div>
+                    <span id="serverStatusTooltip" class="absolute left-full ml-2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 transition-opacity duration-300">Server Status</span>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                    <input type="number" id="amount" placeholder="1000" min="1" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                    <select id="currency" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="INR">INR - Indian Rupee</option>
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Receipt ID</label>
+                    <input type="text" id="receipt" placeholder="order_12345" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+            
+            <button id="paymentButton" onclick="createPayment()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
+                Proceed to Payment
+            </button>
+            
+            <div id="paymentResponse" class="mt-4 hidden p-4 rounded-md text-center">
+                <button id="retryButton" onclick="createPayment()" class="hidden mt-3 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition">
+                    Try Again
+                </button>
+            </div>
+        </div>
+        
+        <div class="text-center text-sm text-gray-500">
+            <p>Secure payments powered by Razorpay</p>
+        </div>
+    </div>
+
+    <script>
+        // Check server status on load
+        document.addEventListener('DOMContentLoaded', async () => {
+            const status = document.getElementById('serverStatus');
+            status.classList.add('animate-pulse');
+            try {
+                await fetch('http://localhost:8000/health-check', { method: 'HEAD' });
+                updateServerStatus(true);
+            } catch {
+                updateServerStatus(false);
+            } finally {
+                status.classList.remove('animate-pulse');
+            }
+        });
+
+        async function createPayment() {
+            const button = document.getElementById('paymentButton');
+            button.disabled = true;
+            button.classList.add('opacity-75', 'cursor-not-allowed');
+            button.innerHTML = 'Processing...';
+            
+            const amount = document.getElementById('amount').value;
+            const currency = document.getElementById('currency').value;
+            const receipt = document.getElementById('receipt').value;
+            const responseDiv = document.getElementById('paymentResponse');
+            
+            responseDiv.classList.add('hidden');
+            
+            if (!amount || !receipt) {
+                showResponse('Please fill all fields', 'error');
+                return;
+            }
+
+            try {
+                const API_BASE = 'http://localhost:8000';
+                // Try to ping server first
+                try {
+                    await fetch(`${API_BASE}/health-check`, { method: 'HEAD' });
+                    updateServerStatus(true);
+                } catch {
+                    updateServerStatus(false);
+                    throw new Error('Server unavailable - please check your connection');
+                }
+                
+                const response = await fetch(`${API_BASE}/create-payment`, {
+                    mode: 'cors',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        amount: amount * 100, // Converting to paise/pence
+                        currency: currency,
+                        receipt: receipt
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        throw new Error(data.detail || 'Invalid payment request');
+                    } else if (response.status === 500) {
+                        throw new Error('Payment processing failed. Please try again.');
+                    } else {
+                        throw new Error(`Payment failed (Status: ${response.status})`);
+                    }
+                }
+
+                showResponse(`
+                    <div class="flex flex-col items-center">
+                        <svg class="w-12 h-12 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="font-semibold">Transaction Complete!</p>
+                        <p class="text-sm mt-1">Order ID: ${data.id}</p>
+                    </div>
+                `, 'success');
+                console.log('Payment created:', data);
+                
+                // In a real app, you would redirect to Razorpay checkout here
+                // For example: handleRazorpayPayment(data.id);
+                
+            } catch (error) {
+                if (error.message.includes('Failed to fetch')) {
+                    showResponse('Failed to connect to payment server. Please check your network connection.', 'error');
+                } else {
+                    showResponse(error.message, 'error');
+                }
+                console.error('Payment error:', error);
+            } finally {
+                button.disabled = false;
+                button.classList.remove('opacity-75', 'cursor-not-allowed');
+                button.innerHTML = 'Proceed to Payment';
+            }
+        }
+
+        function updateServerStatus(isOnline) {
+            const status = document.getElementById('serverStatus');
+            const tooltip = document.getElementById('serverStatusTooltip');
+            status.classList.remove('bg-green-500', 'bg-red-500', 'bg-gray-300');
+            status.classList.add(isOnline ? 'bg-green-500' : 'bg-red-500');
+            
+            status.onmouseenter = () => {
+                tooltip.textContent = isOnline ? 'Server online' : 'Server offline';
+                tooltip.classList.remove('opacity-0');
+            };
+            status.onmouseleave = () => {
+                tooltip.classList.add('opacity-0');
+            };
+        }
+
+        function showResponse(message, type) {
+            const responseDiv = document.getElementById('paymentResponse');
+            const retryButton = document.getElementById('retryButton');
+            
+            responseDiv.innerHTML = message;
+            responseDiv.className = 'mt-4 p-4 rounded-md flex flex-col items-center animate-fade-in';
+            responseDiv.classList.add(type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700');
+            responseDiv.classList.remove('hidden');
+            
+            retryButton.classList.toggle('hidden', type !== 'error');
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    responseDiv.classList.add('hidden');
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

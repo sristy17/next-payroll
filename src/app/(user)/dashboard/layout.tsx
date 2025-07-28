@@ -21,6 +21,7 @@ import {
 import { getSession, signOut } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Dashboard from "@/components/Sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -56,8 +57,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <div className="w-[250px] bg-gradient-to-br from-green-900 to-black m-2 rounded-3xl flex flex-col p-6 sticky top-2 bottom-2 self-start max-h-[calc(100vh-1rem)] overflow-y-auto">
+    <div className="flex p-2 h-screen bg-gray-100">
+      {/* <div className="w-[250px] bg-gradient-to-br from-green-900 to-black m-2 rounded-3xl flex flex-col p-6 sticky top-2 bottom-2 self-start max-h-[calc(100vh-1rem)] overflow-y-auto">
         <div className="flex items-center mb-10 mt-2 gap-3">
           <Image
             src={"/logo.png"}
@@ -117,10 +118,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <></>
           )}
         </div>
-      </div>
+      </div> */}
+      {/*  */}
 
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
-        <header className="flex items-center justify-between mb-8">
+        {/* <header className="flex items-center justify-between mb-8">
           <div className="relative flex items-center w-80">
             <Search className="absolute left-3 text-gray-400 w-5 h-5" />
             <Input
@@ -145,7 +147,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               />
             </div>
           </div>
-        </header>
+        </header> */}
 
         {children}
       </div>

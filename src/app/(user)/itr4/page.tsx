@@ -1,7 +1,5 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Bell, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSession } from "../../api/auth/auth";
 import GenerateButton from '@/components/GenerateButton';

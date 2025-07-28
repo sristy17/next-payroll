@@ -3,6 +3,7 @@ import React from "react";
 import { Search, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface NavbarProps {
   title: string;
@@ -48,7 +49,7 @@ export default function Navbar({ title, description}: NavbarProps) {
           </div>
 
           <div className="flex items-center justify-center h-11 w-11">
-            <img
+            <Image
               src="/user-avatar.png"
               alt="User Avatar"
               width={44}

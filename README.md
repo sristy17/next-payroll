@@ -98,8 +98,8 @@ The **Multi-Tenant Payroll & Tax Compliance System** automates tax filings, payr
 ### Setup Environment Variables
 Create a `.env` file and add your **Supabase API keys**.
 ```sh
-  SUPABASE_URL=https://akcuqzqsubmwzydpdikp.supabase.co
-  SUPABASE_ANON_KEY=your_supabase_anon_key
+  NEXT_PUBLIC_SUPABASE_URL=https://akcuqzqsubmwzydpdikp.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ### Run the Application

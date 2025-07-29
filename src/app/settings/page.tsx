@@ -13,14 +13,12 @@ import { Settings } from "lucide-react";
 
 
 export default function SettingsPage() {
-    // User Preferences
     const [userData, setUserData] = useState({
         fullName: "Anna Sharma",
         email: "anna.sharma@email.com",
         contact: "+91-9876543210",
     });
 
-    // Tax Settings
     const [taxSettings, setTaxSettings] = useState({
         gstin: "27AAAPL1234C1ZV",
         pan: "AAAPL1234C",
@@ -28,14 +26,12 @@ export default function SettingsPage() {
         defaultReturn: "GST Monthly",
     });
 
-    // Notifications
     const [notifications, setNotifications] = useState({
         payroll: true,
         itr: true,
         gst: false,
     });
 
-    // Load from localStorage
     useEffect(() => {
         if (typeof window !== "undefined") {
             const savedUserData = localStorage.getItem("userData");
@@ -48,7 +44,6 @@ export default function SettingsPage() {
         }
     }, []);
 
-    // Save handlers
     const handleSaveUserData = () => {
         localStorage.setItem("userData", JSON.stringify(userData));
         toast.success("User preferences saved!");
@@ -178,8 +173,6 @@ export default function SettingsPage() {
                     </div>
                 </SectionCard>
 
-
-                {/* Notification Preferences */}
                 <SectionCard
                     title="Notification Preferences"
                     subtitle="Choose what notifications you want to receive"
@@ -241,8 +234,6 @@ export default function SettingsPage() {
                     </div>
                 </SectionCard>
 
-
-                {/* Security Settings */}
                 <SectionCard title="Security Settings" subtitle="Update your password and security preferences" icon={<Shield className="w-6 h-6" />}>
                     <ResetPasswordForm />
                 </SectionCard>
@@ -251,7 +242,6 @@ export default function SettingsPage() {
     );
 }
 
-// ------------------- Reusable Components -------------------
 
 function SectionCard({
     title,
@@ -342,7 +332,6 @@ function ResetPasswordForm() {
 
     return (
         <div className="space-y-4">
-            {/* Full-width current password */}
             <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
                 <input
@@ -354,7 +343,6 @@ function ResetPasswordForm() {
                 />
             </div>
 
-            {/* Two half-width fields in a row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
@@ -378,7 +366,6 @@ function ResetPasswordForm() {
                 </div>
             </div>
 
-            {/* Button right aligned */}
             <div className="flex justify-end mt-4">
                 <button
                     onClick={handleReset}

@@ -7,8 +7,6 @@ import { Sun, Moon } from "lucide-react";
 export default function SettingsBar() {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -18,7 +16,6 @@ export default function SettingsBar() {
   return (
     <div className="flex justify-end items-center px-6 py-4 bg-transparent">
       <div className="flex items-center gap-4">
-        {/* Theme Toggle Button */}
         <button
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className="p-2 rounded-full bg-green-300 dark:bg-zinc-800 hover:bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 shadow-md hover:shadow-lg"
@@ -33,7 +30,6 @@ export default function SettingsBar() {
           </span>
         </button>
 
-        {/* Language Selector */}
         <select
           className="border border-gray-300 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
         >

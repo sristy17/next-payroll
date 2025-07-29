@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import {ThemeProvider} from "../components/ThemeProvider";
+import SettingsBar from "../components/SettingBar";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -21,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${raleway.variable} antialiased`}>
-        {children}
-        <Toaster position="top-center" />
+        <ThemeProvider>
+          {children}
+          <Toaster position="top-center" />
+        </ThemeProvider>
       </body>
     </html>
   );

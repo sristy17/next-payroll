@@ -1,6 +1,6 @@
 // src/app/dashboard/layout.tsx
 "use client";
-
+import SettingBar from "@/components/SettingBar"
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -144,6 +144,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 className="rounded-full"
               />
             </div>
+            <SettingBar/>
           </div>
         </header>
 

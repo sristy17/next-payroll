@@ -11,6 +11,27 @@ import { Bell } from "lucide-react";
 import { Shield } from "lucide-react";
 import { Settings } from "lucide-react";
 
+type NotificationKey = 'payroll' | 'itr' | 'gst';
+
+const notificationItems: { key: NotificationKey; title: string; description: string }[] = [
+    {
+        key: "payroll",
+        title: "Payroll Alerts",
+        description: "Get notified about payroll processing and updates",
+    },
+    {
+        key: "itr",
+        title: "ITR Deadline Reminders",
+        description: "Receive reminders for income tax return deadlines",
+    },
+    {
+        key: "gst",
+        title: "GST Filing Alerts",
+        description: "Get alerts for GST filing deadlines and updates",
+    },
+];
+
+
 
 export default function SettingsPage() {
     const [userData, setUserData] = useState({
@@ -26,11 +47,12 @@ export default function SettingsPage() {
         defaultReturn: "GST Monthly",
     });
 
-    const [notifications, setNotifications] = useState({
+    const [notifications, setNotifications] = useState<Record<NotificationKey, boolean>>({
         payroll: true,
         itr: true,
         gst: false,
     });
+
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -179,23 +201,7 @@ export default function SettingsPage() {
                     icon={<Bell className="w-5 h-5" />}
                 >
                     <div className="space-y-4">
-                        {[
-                            {
-                                key: "payroll",
-                                title: "Payroll Alerts",
-                                description: "Get notified about payroll processing and updates",
-                            },
-                            {
-                                key: "itr",
-                                title: "ITR Deadline Reminders",
-                                description: "Receive reminders for income tax return deadlines",
-                            },
-                            {
-                                key: "gst",
-                                title: "GST Filing Alerts",
-                                description: "Get alerts for GST filing deadlines and updates",
-                            },
-                        ].map((item) => (
+                        {notificationItems.map((item) => (
                             <div
                                 key={item.key}
                                 className={`flex justify-between items-center bg-gray-50 rounded-xl p-4 border ${notifications[item.key] ? "border-green-500" : "border-gray-200"
@@ -210,15 +216,16 @@ export default function SettingsPage() {
                                     <input
                                         type="checkbox"
                                         checked={notifications[item.key]}
-                                        onChange={() => setNotifications({
-                                            ...notifications,
-                                            [item.key]: !notifications[item.key],
-                                        })}
+                                        onChange={() =>
+                                            setNotifications((prev) => ({
+                                                ...prev,
+                                                [item.key]: !prev[item.key],
+                                            }))
+                                        }
                                         className="sr-only peer"
                                     />
-                                    <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500 "></div>
+                                    <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500"></div>
                                 </label>
-
                             </div>
                         ))}
                     </div>
@@ -233,6 +240,7 @@ export default function SettingsPage() {
                         </button>
                     </div>
                 </SectionCard>
+
 
                 <SectionCard title="Security Settings" subtitle="Update your password and security preferences" icon={<Shield className="w-6 h-6" />}>
                     <ResetPasswordForm />
@@ -323,7 +331,7 @@ function ResetPasswordForm() {
             setOldPassword("");
             setNewPassword("");
             setConfirmPassword("");
-        } catch (err) {
+        } catch {
             toast.error("Something went wrong.");
         } finally {
             setLoading(false);

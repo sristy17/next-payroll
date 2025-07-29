@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import {AppThemeProvider} from "../components/ThemeProvider";
+import { AppThemeProvider } from "../components/ThemeProvider";
+
 const raleway = Raleway({
   variable: "--font-raleway",
   subsets: ["latin"],
@@ -19,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${raleway.variable} antialiased`}>
         <AppThemeProvider>
           {children}

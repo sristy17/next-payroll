@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Add Payment", href: "/addpayment", icon: Wallet },
+    { name: "Add Payment", href: "/add-payment", icon: Wallet },
     { name: "ITR-1 (Sahaj)", href: "/itr1", icon: FileText },
     { name: "ITR-4 (Sugam)", href: "/itr4", icon: FileText },
     { name: "GST Return Filing", href: "/gst-return", icon: FileText },

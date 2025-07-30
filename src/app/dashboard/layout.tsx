@@ -60,12 +60,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-    {showSidebar && (
-  <div
+    {showSidebar && (<div
     className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-    onClick={() => setShowSidebar(false)}
-  />
-)}
+    onClick={() => setShowSidebar(false)} />)}
 <div className={`fixed inset-y-0 left-0 z-50 transform bg-gradient-to-br from-green-900 to-black w-64 p-6 rounded-r-3xl transition-transform duration-300 ease-in-out
     ${showSidebar ? "translate-x-0" : "-translate-x-full"}
     md:relative md:translate-x-0 md:flex md:flex-col md:w-[250px] md:rounded-3xl md:top-2 md:bottom-2 md:m-2 md:max-h-[calc(100vh-1rem)] md:overflow-y-auto

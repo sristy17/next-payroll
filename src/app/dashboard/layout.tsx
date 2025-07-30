@@ -60,22 +60,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-    {showSidebar && (<div
-    className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-    onClick={() => setShowSidebar(false)} />)}
-<div className={`fixed inset-y-0 left-0 z-50 transform bg-gradient-to-br from-green-900 to-black w-64 p-6 rounded-r-3xl transition-transform duration-300 ease-in-out
+      {showSidebar && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setShowSidebar(false)}
+        />
+      )}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 transform bg-gradient-to-br from-green-900 to-black w-64 p-6 rounded-r-3xl transition-transform duration-300 ease-in-out
     ${showSidebar ? "translate-x-0" : "-translate-x-full"}
     md:relative md:translate-x-0 md:flex md:flex-col md:w-[250px] md:rounded-3xl md:top-2 md:bottom-2 md:m-2 md:max-h-[calc(100vh-1rem)] md:overflow-y-auto
-  `}>
-    <Button
-  variant="ghost"
-  size="icon"
-  className="mb-2 self-end md:hidden text-white"
-  onClick={() => setShowSidebar(false)}
->
-  <X className="w-5 h-5" />
-</Button>
-<div className="flex items-center mb-10 mt-2 gap-3">
+  `}
+      >
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mb-2 self-end md:hidden text-white"
+          onClick={() => setShowSidebar(false)}
+        >
+          <X className="w-5 h-5" />
+        </Button>
+        <div className="flex items-center mb-10 mt-2 gap-3">
           <Image
             src={"/logo.png"}
             alt="Next Pay Logo"
@@ -139,12 +144,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
         <header className="flex items-center justify-between mb-8">
           <Button
-  variant="ghost"
-  className="md:hidden"
-  onClick={() => setShowSidebar(true)}
->
-  <Menu className="w-6 h-6 text-gray-700" />
-</Button>
+            variant="ghost"
+            className="md:hidden"
+            onClick={() => setShowSidebar(true)}
+          >
+            <Menu className="w-6 h-6 text-gray-700" />
+          </Button>
 
           <div className="relative flex items-center w-80">
             <Search className="absolute left-3 text-gray-400 w-5 h-5" />

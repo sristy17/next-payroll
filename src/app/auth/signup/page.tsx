@@ -5,44 +5,45 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { signUp } from "@/app/api/auth/auth";
+import { signup } from "@/app/api/auth/auth"; // FIXED import
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-import { FaRegEye } from "react-icons/fa";
-import { FaRegEyeSlash } from "react-icons/fa";
-
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 export default function SignupPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
 
   const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
 
     const defaultName = email.split("@")[0] || "New User";
 
-    const { user, error } = await signUp(defaultName, email, password);
+    // Basic password validation
+    if (password.length < 8 || !/\d/.test(password)) {
+      toast.error("Password must be at least 8 characters and contain at least one number.");
+      return;
+    }
+
+    setLoading(true);
+
+    const { data: user, error } = await signup(defaultName, email, password);
 
     if (error) {
-      toast.error(`Could not sign-up: ${error.message}`, {
-        id: "sign-up",
-      });
+      toast.error(`Could not sign-up: ${error}`);
     } else if (user) {
-      toast.success("Sign-up Success", {
-        id: "sign-up",
-      });
+      toast.success("Sign-up Success");
       router.push("/auth/login");
     }
+
     setLoading(false);
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-sm p-8 rounded-lg shadow-lg">
@@ -71,50 +72,37 @@ export default function SignupPage() {
               className="border-gray-300 focus:border-green-500 focus:ring-green-500"
             />
           </div>
-          <div>
 
-            <div className="realtive flex items-center justify-between ">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className=" flex-grow border-gray-300 focus:border-green-500 focus:ring-green-500"
-              />
-              {showPassword ? (
-                <FaRegEye
-                  onClick={() => setShowPassword(false)}
-                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
-                />
-              ) : (
-                <FaRegEyeSlash
-                  onClick={() => setShowPassword(true)}
-                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
-                />
-              )}
-            </div>
-
-
+          <div className="relative flex items-center">
             <Input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+              className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
             />
+            {showPassword ? (
+              <FaRegEye
+                onClick={() => setShowPassword(false)}
+                className="absolute right-3 text-gray-500 cursor-pointer"
+              />
+            ) : (
+              <FaRegEyeSlash
+                onClick={() => setShowPassword(true)}
+                className="absolute right-3 text-gray-500 cursor-pointer"
+              />
+            )}
+          </div>
 
-            <div className="text-right mt-2">
-              <Link
-                href="#"
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
-                Forgot password?
-              </Link>
-            </div>
+          <div className="text-right mt-2">
+            <Link
+              href="#"
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
+              Forgot password?
+            </Link>
           </div>
 
           <Button

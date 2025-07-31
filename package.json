@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@auth/supabase-adapter": "^1.8.0",
+    "@hookform/resolvers": "^5.2.1",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.1",
@@ -23,11 +26,13 @@
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.61.1",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "recharts": "^3.1.0",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

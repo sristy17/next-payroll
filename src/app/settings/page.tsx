@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar";
 import SettingBar from "@/components/SettingBar";
 import { toast } from "react-hot-toast";
-import { FileText } from "lucide-react";
-import { SaveAll } from "lucide-react";
-import { User } from "lucide-react";
-import { Bell } from "lucide-react";
-import { Shield } from "lucide-react";
-import { Settings } from "lucide-react";
+import { FileText, SaveAll, User, Bell, Shield, Settings } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
-type NotificationKey = 'payroll' | 'itr' | 'gst';
+type NotificationKey = "payroll" | "itr" | "gst";
 
 const notificationItems: { key: NotificationKey; title: string; description: string }[] = [
     {
@@ -30,8 +30,6 @@ const notificationItems: { key: NotificationKey; title: string; description: str
         description: "Get alerts for GST filing deadlines and updates",
     },
 ];
-
-
 
 export default function SettingsPage() {
     const [userData, setUserData] = useState({
@@ -52,7 +50,6 @@ export default function SettingsPage() {
         itr: true,
         gst: false,
     });
-
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -84,122 +81,119 @@ export default function SettingsPage() {
     return (
         <div className="flex min-h-screen bg-gray-100">
             {/* Sidebar */}
-            <div className="w-64 bg-gray-100  border-gray-200">
+            <div className="w-64 bg-gray-100 border-gray-200">
                 <Sidebar />
             </div>
 
             {/* Main Content */}
             <div className="flex-1 p-8 overflow-y-auto">
                 <div className="flex justify-between items-center mb-8">
-                    <h2 className="flex gap-2 text-3xl font-bold text-gray-800 dark:text-white"><Settings className="mt-2" />Settings</h2>
+                    <h2 className="flex gap-2 text-3xl font-bold text-gray-800 dark:text-white">
+                        <Settings className="mt-2" /> Settings
+                    </h2>
                     <SettingBar />
                 </div>
 
                 {/* User Preferences */}
-                <SectionCard
-                    title="User Preferences"
-                    subtitle="Manage your personal information and account details"
-                    icon={<User className="w-6 h-6" />}
-                >
-
-                    {/* Input Fields Grid */}
+                <SectionCard title="User Preferences" subtitle="Manage your personal information and account details" icon={<User className="w-6 h-6" />}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Input
-                            label="Full Name"
-                            placeholder="Anna Sharma"
-                            value={userData.fullName}
-                            onChange={(e) => setUserData({ ...userData, fullName: e.target.value })}
-                        />
-                        <Input
-                            label="Email Address"
-                            placeholder="anna.sharma@email.com"
-                            value={userData.email}
-                            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                        />
-                        <Input
-                            label="Contact Number"
-                            placeholder="+91-9876543210"
-                            value={userData.contact}
-                            onChange={(e) => setUserData({ ...userData, contact: e.target.value })}
-                        />
+                        <div>
+                            <Label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</Label>
+                            <Input
+                                placeholder="Anna Sharma"
+                                value={userData.fullName}
+                                onChange={(e) => setUserData({ ...userData, fullName: e.target.value })}
+                                className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
+                            />
+                        </div>
+                        <div>
+                            <Label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</Label>
+                            <Input
+                                placeholder="anna.sharma@email.com"
+                                value={userData.email}
+                                onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                                className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
+                            />
+                        </div>
+                        <div>
+                            <Label className="block text-sm font-semibold text-gray-700 mb-2">Contact Number</Label>
+                            <Input
+                                placeholder="+91-9876543210"
+                                value={userData.contact}
+                                onChange={(e) => setUserData({ ...userData, contact: e.target.value })}
+                                className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
+                            />
+                        </div>
                     </div>
 
-                    {/* Save Button */}
                     <div className="flex justify-end mt-8">
-                        <button
+                        <Button
                             onClick={handleSaveUserData}
                             className="flex items-center gap-2 bg-gradient-to-br from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300"
                         >
                             <SaveAll className="w-5 h-5" />
                             Save Changes
-                        </button>
+                        </Button>
                     </div>
                 </SectionCard>
 
                 {/* Tax Settings */}
-                <SectionCard
-                    title="Tax Settings"
-                    subtitle="Configure your tax-related information and preferences"
-                    icon={<FileText className="w-6 h-6" />}
-                >
-
+                <SectionCard title="Tax Settings" subtitle="Configure your tax-related information and preferences" icon={<FileText className="w-6 h-6" />}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">GSTIN</label>
-                            <input
-                                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-800 transition-all"
+                            <Label className="block text-sm font-semibold text-gray-700 mb-2">GSTIN</Label>
+                            <Input
+                                placeholder="27AAAPL1234C1ZV"
                                 value={taxSettings.gstin}
                                 onChange={(e) => setTaxSettings({ ...taxSettings, gstin: e.target.value })}
-                                placeholder="27AAAPL1234C1ZV"
+                                className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">PAN</label>
-                            <input
-                                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-800 transition-all"
+                            <Label className="block text-sm font-semibold text-gray-700 mb-2">PAN</Label>
+                            <Input
+                                placeholder="AAAPL1234C"
                                 value={taxSettings.pan}
                                 onChange={(e) => setTaxSettings({ ...taxSettings, pan: e.target.value })}
-                                placeholder="AAAPL1234C"
+                                className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">TAN</label>
-                            <input
-                                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-800 transition-all"
+                            <Label className="block text-sm font-semibold text-gray-700 mb-2">TAN</Label>
+                            <Input
+                                placeholder="MUMA12345B"
                                 value={taxSettings.tan}
                                 onChange={(e) => setTaxSettings({ ...taxSettings, tan: e.target.value })}
-                                placeholder="MUMA12345B"
+                                className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Default Return Type</label>
-                            <select
-                                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white shadow-inner text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
-                                value={taxSettings.defaultReturn}
-                                onChange={(e) => setTaxSettings({ ...taxSettings, defaultReturn: e.target.value })}
-                            >
-                                <option>GST Monthly</option>
-                                <option>GST Quarterly</option>
-                            </select>
+                            <Label className="block text-sm font-semibold text-gray-700 mb-2">Default Return Type</Label>
+                            <Select value={taxSettings.defaultReturn} onValueChange={(value) => setTaxSettings({ ...taxSettings, defaultReturn: value })}>
+                                <SelectTrigger className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all">
+                                    <SelectValue placeholder="Select return type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="GST Monthly">GST Monthly</SelectItem>
+                                    <SelectItem value="GST Quarterly">GST Quarterly</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
                     <div className="flex justify-end mt-8">
-                        <button
+                        <Button
                             onClick={handleSaveTaxSettings}
                             className="flex items-center gap-2 bg-gradient-to-br from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300"
                         >
                             <SaveAll className="w-5 h-5" />
                             Save Changes
-                        </button>
+                        </Button>
                     </div>
                 </SectionCard>
 
-                <SectionCard
-                    title="Notification Preferences"
-                    subtitle="Choose what notifications you want to receive"
-                    icon={<Bell className="w-5 h-5" />}
-                >
+                {/* Notification Preferences */}
+                <SectionCard title="Notification Preferences" subtitle="Choose what notifications you want to receive" icon={<Bell className="w-5 h-5" />}>
                     <div className="space-y-4">
                         {notificationItems.map((item) => (
                             <div
@@ -211,37 +205,28 @@ export default function SettingsPage() {
                                     <p className="font-semibold text-gray-800">{item.title}</p>
                                     <p className="text-gray-500 text-sm">{item.description}</p>
                                 </div>
+                                <Switch
+                                    checked={notifications[item.key]}
+                                    onCheckedChange={() => setNotifications((prev) => ({ ...prev, [item.key]: !prev[item.key] }))}
+                                    className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
+                                />
 
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={notifications[item.key]}
-                                        onChange={() =>
-                                            setNotifications((prev) => ({
-                                                ...prev,
-                                                [item.key]: !prev[item.key],
-                                            }))
-                                        }
-                                        className="sr-only peer"
-                                    />
-                                    <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500"></div>
-                                </label>
                             </div>
                         ))}
                     </div>
 
                     <div className="flex justify-end mt-6">
-                        <button
+                        <Button
                             onClick={handleSaveNotifications}
                             className="flex items-center gap-2 bg-gradient-to-br from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300"
                         >
                             <SaveAll className="w-5 h-5" />
                             Save Changes
-                        </button>
+                        </Button>
                     </div>
                 </SectionCard>
 
-
+                {/* Security Settings */}
                 <SectionCard title="Security Settings" subtitle="Update your password and security preferences" icon={<Shield className="w-6 h-6" />}>
                     <ResetPasswordForm />
                 </SectionCard>
@@ -250,18 +235,7 @@ export default function SettingsPage() {
     );
 }
 
-
-function SectionCard({
-    title,
-    subtitle,
-    icon,
-    children,
-}: {
-    title: string;
-    subtitle?: string;
-    icon?: React.ReactNode;
-    children: React.ReactNode;
-}) {
+function SectionCard({ title, subtitle, icon, children }: { title: string; subtitle?: string; icon?: React.ReactNode; children: React.ReactNode }) {
     return (
         <div className="bg-white/70 backdrop-blur-sm border border-gray-200 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-3xl px-8 py-6 mb-12">
             <div className="flex items-center mb-6">
@@ -279,35 +253,6 @@ function SectionCard({
         </div>
     );
 }
-
-
-function Input({
-    label,
-    placeholder,
-    type = "text",
-    value,
-    onChange,
-}: {
-    label: string;
-    placeholder: string;
-    type?: string;
-    value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-    return (
-        <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
-            <input
-                type={type}
-                placeholder={placeholder}
-                value={value}
-                onChange={onChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-800 transition-all duration-200"
-            />
-        </div>
-    );
-}
-
 
 function ResetPasswordForm() {
     const [oldPassword, setOldPassword] = useState("");
@@ -341,48 +286,46 @@ function ResetPasswordForm() {
     return (
         <div className="space-y-4">
             <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
-                <input
+                <Label className="block text-sm font-semibold text-gray-700 mb-2">Current Password</Label>
+                <Input
                     type="password"
                     placeholder="Enter current password"
                     value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-800 transition-all duration-200"
+                    className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
                 />
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
-                    <input
+                    <Label className="block text-sm font-semibold text-gray-700 mb-2">New Password</Label>
+                    <Input
                         type="password"
                         placeholder="Enter new password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-800 transition-all duration-200"
+                        className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
-                    <input
+                    <Label className="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</Label>
+                    <Input
                         type="password"
                         placeholder="Confirm new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-800 transition-all duration-200"
+                        className="px-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-gray-800 focus:ring-2 focus:ring-green-500 transition-all"
                     />
                 </div>
             </div>
-
             <div className="flex justify-end mt-4">
-                <button
+                <Button
                     onClick={handleReset}
                     disabled={loading}
                     className="flex items-center gap-2 bg-gradient-to-br from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300 disabled:opacity-60"
                 >
                     <Shield className="w-5 h-5" />
                     {loading ? "Updating..." : "Update Password"}
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-theme="dark" style={{ colorScheme: "dark" }}>
       <body className={`${raleway.variable} antialiased`}>
         <AppThemeProvider>
           {children}

@@ -3,10 +3,13 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
 export default function SettingsBar() {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -16,27 +19,29 @@ export default function SettingsBar() {
   return (
     <div className="flex justify-end items-center px-6 py-4 bg-transparent">
       <div className="flex items-center gap-4">
-        <button
+        <Button
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          className="p-2 rounded-full bg-green-300 dark:bg-zinc-800 hover:bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 shadow-md hover:shadow-lg"
+          size="icon"
           title="Toggle Theme"
+          className="rounded-full bg-green-600/90 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 transition-colors"
         >
-          <span className="text-gray-800 dark:text-gray-200 transition-transform duration-300">
-            {resolvedTheme === "dark" ? (
-              <Sun className="w-5 h-5 rotate-0 hover:rotate-90 transition-transform" />
-            ) : (
-              <Moon className="w-5 h-5 rotate-0 hover:-rotate-90 transition-transform" />
-            )}
-          </span>
-        </button>
+          {resolvedTheme === "dark" ? (
+            <Sun className="w-5 h-5 text-gray-100" />
+          ) : (
+            <Moon className="w-5 h-5 text-gray-100" />
+          )}
+        </Button>
 
-        <select
-          className="border border-gray-300 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-        >
-          <option value="en">English</option>
-          <option value="hi">Hindi</option>
-          <option value="mr">Marathi</option>
-        </select>
+        <Select>
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Select Language" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="hi">Hindi</SelectItem>
+            <SelectItem value="mr">Marathi</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

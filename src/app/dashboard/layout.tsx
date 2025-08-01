@@ -62,7 +62,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Added dark mode background */}
-      <div className="w-[250px] bg-gradient-to-br from-green-900 to-black m-2 rounded-3xl flex flex-col p-6 sticky top-2 bottom-2 self-start max-h-[calc(100vh-1rem)] overflow-y-auto">
+      {/* Modified sidebar padding and removed overflow-y-auto */}
+      {/* Increased bottom padding to pb-8 */}
+      <div className="w-[250px] bg-gradient-to-br from-green-900 to-black m-2 rounded-3xl flex flex-col px-4 pt-4 pb-8 sticky top-2 bottom-2 self-start max-h-[calc(100vh-1rem)]">
         <div className="flex items-center mb-10 mt-2 gap-3">
           <Image
             src={"/logo.png"}
@@ -94,8 +96,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           ))}
         </nav>
 
-        <div className="mt-auto pt-6 border-t border-green-800">
-          <div className="flex items-center space-x-3 p-3">
+        {/* Modified user info section padding */}
+        <div className="mt-auto pt-4 border-t border-green-800">
+          <div className="flex items-center space-x-3 p-2">
             <Image
               src="/user-avatar.png"
               alt="User Avatar"
@@ -124,6 +127,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       </div>
 
+      {/* Main content area */}
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
         <header className="flex items-center justify-between mb-8">
           <div className="relative flex items-center w-80">

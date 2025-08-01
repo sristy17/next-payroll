@@ -16,11 +16,14 @@ import {
   Search,
   Plus,
   Bell,
+  Sun, // Import Sun icon
+  Moon, // Import Moon icon
 } from "lucide-react";
 
 import { getSession, signOut } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext"; // Import useTheme hook
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -43,6 +46,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [username, setUserName] = useState<string | undefined>(undefined);
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme(); // Use the theme context
 
   useEffect(() => {
     async function fetchSession() {
@@ -56,7 +60,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Added dark mode background */}
       <div className="w-[250px] bg-gradient-to-br from-green-900 to-black m-2 rounded-3xl flex flex-col p-6 sticky top-2 bottom-2 self-start max-h-[calc(100vh-1rem)] overflow-y-auto">
         <div className="flex items-center mb-10 mt-2 gap-3">
           <Image
@@ -122,19 +127,36 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
         <header className="flex items-center justify-between mb-8">
           <div className="relative flex items-center w-80">
-            <Search className="absolute left-3 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 text-gray-400 dark:text-gray-600 w-5 h-5" />
+            {/* Added dark mode text color */}
             <Input
               type="text"
               placeholder="Search..."
-              className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 w-full"
+              className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-green-500 focus:border-green-500 w-full dark:bg-gray-800 dark:text-white"
             />
+            {/* Added dark mode border, background, and text color */}
           </div>
 
           <div className="flex items-center space-x-4">
+            {/* Theme Toggle Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              {theme === 'light' ? (
+                <Sun className="h-6 w-6" />
+              ) : (
+                <Moon className="h-6 w-6" />
+              )}
+            </Button>
+
             <Button className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 flex items-center gap-2">
               <Plus className="w-4 h-4" /> Add Business
             </Button>
-            <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
+            <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer" />
+            {/* Added dark mode text color */}
             <div className="flex items-center cursor-pointer">
               <Image
                 src="/user-avatar.png"

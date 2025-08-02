@@ -1,4 +1,5 @@
 // src/app/dashboard/layout.tsx
+
 "use client";
 import SettingBar from "@/components/SettingBar"
 import { usePathname } from "next/navigation";
@@ -20,14 +21,20 @@ import {
 } from "lucide-react";
 import { X } from "lucide-react";
 
-import { getSession, signOut } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
+export async function logout() {
+  await fetch('/api/logout', {
+    method: 'POST',
+  });
 
+  // Optional: redirect to login page
+  window.location.href = '/auth/login';
+}
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const isActive = (path: string) => pathname === path;
@@ -48,15 +55,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
-    async function fetchSession() {
-      const { session, error } = await getSession();
-      if (session && error === null) {
+  async function fetchSession() {
+    try {
+      const res = await fetch("/api/me");
+      const { session } = await res.json();
+      if (session) {
         setUserName(session.name);
         setUserEmail(session.email);
       }
+    } catch (err) {
+      console.error("Failed to load session:", err);
     }
-    fetchSession();
-  }, []);
+  }
+  fetchSession();
+}, []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -129,7 +141,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Button
               className="w-full mt-4 bg-green-700 text-white"
               onClick={async () => {
-                await signOut();
+                await logout();
                 router.push("/auth/login");
               }}
             >

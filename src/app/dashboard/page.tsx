@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import Link from "next/link";
 import StatisticsSection from './StatisticsSection';
 
@@ -11,7 +10,6 @@ import {
   Dot,
   MoreHorizontal,
 } from "lucide-react";
-import { getSession } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
 
 const mockTransactions = [
@@ -69,15 +67,21 @@ const mockTaxFilings = [
 export default function DashboardPage() {
   const [username, setUserName] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    async function fetchSession() {
-      const { session, error } = await getSession();
-      if (session && error === null) {
+ useEffect(() => {
+  async function fetchSession() {
+    try {
+      const res = await fetch("/api/me");
+      const { session } = await res.json();
+      if (session) {
         setUserName(session.name);
       }
+    } catch (err) {
+      console.error("Failed to load session:", err);
     }
-    fetchSession();
-  }, []);
+  }
+  fetchSession();
+}, []);
+
 
   return (
     <>

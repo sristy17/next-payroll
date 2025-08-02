@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+
 import { AppThemeProvider } from "../components/ThemeProvider";
 
 const raleway = Raleway({

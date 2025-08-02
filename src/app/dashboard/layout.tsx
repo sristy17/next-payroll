@@ -21,6 +21,7 @@ import {
 import { getSession, signOut } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -75,13 +76,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 p-3 rounded-lg text-white font-medium transition-colors duration-200
-                ${
-                  isActive(item.href)
-                    ? "text-green-900"
-                    : "hover:bg-green-800/50"
-                }
-              `}
+              className={
+                cn(
+                  "flex items-center gap-3 p-3 rounded-lg text-white font-medium transition-colors duration-200 hover:bg-green-800/50",
+                  isActive(item.href) && "bg-green-800/50"
+                )
+              }
             >
               <item.icon className="w-5 h-5" />
               {item.name}

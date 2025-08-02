@@ -11,6 +11,7 @@ import {
   HelpCircle,
   Settings,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const pathname = usePathname();
@@ -45,13 +46,12 @@ export default function Dashboard() {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex items-center gap-3 p-3 rounded-lg text-white font-medium transition-colors duration-200
-              ${
-                isActive(item.href)
-                  ? "bg-white text-green-900"
-                  : "hover:bg-green-800/50"
-              }
-            `}
+            className={
+              cn(
+                "flex items-center gap-3 p-3 rounded-lg text-white font-medium transition-colors duration-200 hover:bg-green-800/50",
+                isActive(item.href) && "bg-green-800"
+              )
+            }
           >
             <item.icon className="w-5 h-5" />
             {item.name}

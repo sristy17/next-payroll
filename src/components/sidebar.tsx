@@ -48,7 +48,7 @@ export default function Dashboard() {
             className={`flex items-center gap-3 p-3 rounded-lg text-white font-medium transition-colors duration-200
               ${
                 isActive(item.href)
-                  ? "bg-white text-green-900"
+                  ? "bg-green-800 text-green-900"
                   : "hover:bg-green-800/50"
               }
             `}

@@ -6,6 +6,7 @@ import { Bell, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSession } from "../api/auth/auth";
 import GenerateButton from '@/components/GenerateButton';
+import Image from "next/image";
 
 export default function Itr4() {
 
@@ -47,7 +48,7 @@ export default function Itr4() {
             </Button>
             <Bell className="size-7 text-gray-400 hover:text-gray-600 cursor-pointer" />
             <div className="flex items-center ml-2">
-              <img src="/user-avatar.png" alt="User Avatar" width={44} height={44} className="rounded-full border-2 border-white shadow" />
+              <Image src="/user-avatar.png" alt="User Avatar" width={44} height={44} className="rounded-full border-2 border-white shadow" />
             </div>
           </div>
         </header>

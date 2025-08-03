@@ -1,6 +1,5 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -64,7 +63,7 @@ export default function GstReturn() {
 
     setTimeout(() => {
       console.log("Auto-filing GST return with tracked data:", autoGSTData);
-      alert("GST Return filed automatically based on your transaction data!");
+      alert("GST Return file./src/app/(user)/gst-return/page.tsx./src/app/(user)/gst-return/page.tsxd automatically based on your transaction data!");
       setAutoGSTData((prev) => ({
         ...prev,
         filingStatus: "filed",

@@ -1,7 +1,7 @@
-// src/app/dashboard/layout.tsx
 "use client";
+
 import SettingBar from "@/components/SettingBar"
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,18 +17,17 @@ import {
   Plus,
   Bell,
   Menu,
+  X
 } from "lucide-react";
-import { X } from "lucide-react";
 
 import { getSession, signOut } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({ children }: Readonly<DashboardLayoutProps>) {
   const pathname = usePathname();
   const isActive = (path: string) => pathname === path;
 
@@ -42,7 +41,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
-  const [username, setUserName] = useState<string | undefined>(undefined);
+  const [username, setUsername] = useState<string | undefined>(undefined);
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
@@ -51,7 +50,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     async function fetchSession() {
       const { session, error } = await getSession();
       if (session && error === null) {
-        setUserName(session.name);
+        setUsername(session.name);
         setUserEmail(session.email);
       }
     }

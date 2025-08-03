@@ -1,14 +1,30 @@
-"use client"
-import Sidebar from "@/components/sidebar";
+"use client";
+
+import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Bell, ArrowLeft, Building2, MapPin, Calendar, User, Briefcase, Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Bell,
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Calendar,
+  User,
+  Briefcase,
+  Search,
+} from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AddBusiness() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,30 +46,31 @@ export default function AddBusiness() {
     phone: "",
     website: "",
     establishedDate: "",
-    description: ""
+    description: "",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    //Implement business creation logic here
-    // For now, simulate API call
     setTimeout(() => {
       console.log("Business data:", formData);
       setIsSubmitting(false);
@@ -90,7 +107,13 @@ export default function AddBusiness() {
             </Button>
             <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
             <div className="flex items-center cursor-pointer">
-              <Image src="/user-avatar.png" alt="User Avatar" width={32} height={32} className="rounded-full" />
+              <Image
+                src="/user-avatar.png"
+                alt="User Avatar"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
             </div>
           </div>
         </header>
@@ -99,8 +122,12 @@ export default function AddBusiness() {
           <div className="flex items-center mb-6">
             <Building2 className="w-8 h-8 text-green-600 mr-3" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Business</h1>
-              <p className="text-gray-600">Set up your business profile for payroll and tax management</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Add New Business
+              </h1>
+              <p className="text-gray-600">
+                Set up your business profile for payroll and tax management
+              </p>
             </div>
           </div>
 
@@ -128,18 +155,28 @@ export default function AddBusiness() {
                   <Label htmlFor="businessType">Business Type *</Label>
                   <Select
                     value={formData.businessType}
-                    onValueChange={(value: string) => handleSelectChange('businessType', value)}
+                    onValueChange={(value: string) =>
+                      handleSelectChange("businessType", value)
+                    }
                     required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select business type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="sole_proprietorship">Sole Proprietorship</SelectItem>
+                      <SelectItem value="sole_proprietorship">
+                        Sole Proprietorship
+                      </SelectItem>
                       <SelectItem value="partnership">Partnership</SelectItem>
-                      <SelectItem value="private_limited">Private Limited Company</SelectItem>
-                      <SelectItem value="public_limited">Public Limited Company</SelectItem>
-                      <SelectItem value="llp">Limited Liability Partnership</SelectItem>
+                      <SelectItem value="private_limited">
+                        Private Limited Company
+                      </SelectItem>
+                      <SelectItem value="public_limited">
+                        Public Limited Company
+                      </SelectItem>
+                      <SelectItem value="llp">
+                        Limited Liability Partnership
+                      </SelectItem>
                       <SelectItem value="trust">Trust</SelectItem>
                       <SelectItem value="society">Society</SelectItem>
                     </SelectContent>
@@ -178,7 +215,9 @@ export default function AddBusiness() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="registrationNumber">Registration Number</Label>
+                  <Label htmlFor="registrationNumber">
+                    Registration Number
+                  </Label>
                   <Input
                     id="registrationNumber"
                     name="registrationNumber"

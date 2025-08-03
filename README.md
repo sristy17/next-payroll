@@ -115,4 +115,3 @@ Create a `.env` file and add your **Supabase API keys**.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
-

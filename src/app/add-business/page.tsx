@@ -1,8 +1,17 @@
-"use client"
-import Sidebar from "@/components/sidebar";
+"use client";
+
+import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bell, ArrowLeft, Building2, MapPin, Calendar, User, Briefcase } from "lucide-react";
+import {
+  Bell,
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Calendar,
+  User,
+  Briefcase,
+} from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -27,21 +36,25 @@ export default function AddBusiness() {
     phone: "",
     website: "",
     establishedDate: "",
-    description: ""
+    description: "",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     //Implement business creation logic here
     // For now, simulate API call
     setTimeout(() => {
@@ -61,7 +74,16 @@ export default function AddBusiness() {
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
         <header className="flex items-center justify-between mb-8">
           <div className="relative flex items-center w-80">
-            <svg className="absolute left-3 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <svg
+              className="absolute left-3 text-gray-400 w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
             <Input
               type="text"
               placeholder="Search..."
@@ -80,7 +102,13 @@ export default function AddBusiness() {
             </Button>
             <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
             <div className="flex items-center cursor-pointer">
-              <Image src="/user-avatar.png" alt="User Avatar" width={32} height={32} className="rounded-full" />
+              <Image
+                src="/user-avatar.png"
+                alt="User Avatar"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
             </div>
           </div>
         </header>
@@ -89,8 +117,12 @@ export default function AddBusiness() {
           <div className="flex items-center mb-6">
             <Building2 className="w-8 h-8 text-green-600 mr-3" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Business</h1>
-              <p className="text-gray-600">Set up your business profile for payroll and tax management</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Add New Business
+              </h1>
+              <p className="text-gray-600">
+                Set up your business profile for payroll and tax management
+              </p>
             </div>
           </div>
 
@@ -127,10 +159,16 @@ export default function AddBusiness() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                   >
                     <option value="">Select business type</option>
-                    <option value="sole_proprietorship">Sole Proprietorship</option>
+                    <option value="sole_proprietorship">
+                      Sole Proprietorship
+                    </option>
                     <option value="partnership">Partnership</option>
-                    <option value="private_limited">Private Limited Company</option>
-                    <option value="public_limited">Public Limited Company</option>
+                    <option value="private_limited">
+                      Private Limited Company
+                    </option>
+                    <option value="public_limited">
+                      Public Limited Company
+                    </option>
                     <option value="llp">Limited Liability Partnership</option>
                     <option value="trust">Trust</option>
                     <option value="society">Society</option>
@@ -146,7 +184,6 @@ export default function AddBusiness() {
                     onChange={handleInputChange}
                     placeholder="e.g., Technology, Healthcare"
                     className="w-full"
-                    
                   />
                 </div>
                 <div>
@@ -159,7 +196,6 @@ export default function AddBusiness() {
                     value={formData.establishedDate}
                     onChange={handleInputChange}
                     className="w-full"
-                    
                   />
                 </div>
               </div>
@@ -182,7 +218,6 @@ export default function AddBusiness() {
                     onChange={handleInputChange}
                     placeholder="Company registration number"
                     className="w-full"
-                    
                   />
                 </div>
                 <div>
@@ -196,7 +231,6 @@ export default function AddBusiness() {
                     placeholder="ABCDE1234F"
                     required
                     className="w-full uppercase"
-                    
                     maxLength={10}
                   />
                 </div>
@@ -210,7 +244,6 @@ export default function AddBusiness() {
                     onChange={handleInputChange}
                     placeholder="22AAAAA0000A1Z5"
                     className="w-full uppercase"
-                    
                     maxLength={15}
                   />
                 </div>
@@ -250,7 +283,6 @@ export default function AddBusiness() {
                       placeholder="City"
                       required
                       className="w-full"
-                      
                     />
                   </div>
                   <div>
@@ -264,7 +296,6 @@ export default function AddBusiness() {
                       placeholder="State"
                       required
                       className="w-full"
-                      
                     />
                   </div>
                   <div>
@@ -278,7 +309,6 @@ export default function AddBusiness() {
                       placeholder="123456"
                       required
                       className="w-full"
-                      
                       maxLength={6}
                     />
                   </div>
@@ -304,7 +334,6 @@ export default function AddBusiness() {
                     placeholder="Full name of contact person"
                     required
                     className="w-full"
-                    
                   />
                 </div>
                 <div>
@@ -319,7 +348,6 @@ export default function AddBusiness() {
                     placeholder="business@example.com"
                     required
                     className="w-full"
-                    
                   />
                 </div>
                 <div>
@@ -334,7 +362,6 @@ export default function AddBusiness() {
                     placeholder="+91 98765 43210"
                     required
                     className="w-full"
-                    
                   />
                 </div>
                 <div>
@@ -348,7 +375,6 @@ export default function AddBusiness() {
                     onChange={handleInputChange}
                     placeholder="https://www.example.com"
                     className="w-full"
-                    
                   />
                 </div>
               </div>
@@ -381,7 +407,6 @@ export default function AddBusiness() {
                 variant="outline"
                 onClick={handleGoBack}
                 className="flex-1 rounded-lg font-medium text-gray-700 text-sm shadow-sm border-gray-300 hover:bg-gray-50"
-                
               >
                 Cancel
               </Button>
@@ -389,7 +414,6 @@ export default function AddBusiness() {
                 type="submit"
                 disabled={isSubmitting}
                 className="flex-1 bg-green-700 hover:bg-green-600 text-white rounded-lg font-medium text-sm shadow-sm flex items-center justify-center gap-2"
-                
               >
                 {isSubmitting ? "Creating Business..." : "Create Business"}
               </Button>

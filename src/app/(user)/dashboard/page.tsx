@@ -66,13 +66,13 @@ const mockTaxFilings = [
 ];
 
 export default function DashboardPage() {
-  const [username, setUserName] = useState<string | undefined>(undefined);
+  const [username, setUsername] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     async function fetchSession() {
       const { session, error } = await getSession();
       if (session && error === null) {
-        setUserName(session.name);
+        setUsername(session.name);
       }
     }
     fetchSession();

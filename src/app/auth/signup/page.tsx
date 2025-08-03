@@ -16,9 +16,11 @@ import { FaRegEyeSlash } from "react-icons/fa";
 export default function SignupPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
 
   const router = useRouter();
@@ -26,6 +28,18 @@ export default function SignupPage() {
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
+    if(password === "" || confirmPassword === "") {
+      setLoading(false);
+      toast.error("Passwords field can't be empty");
+      return;
+    }
+
+    if(password !== confirmPassword){
+      setLoading(false);
+      toast.error("Passwords must match");
+      return;
+    }
 
     const defaultName = email.split("@")[0] || "New User";
 
@@ -96,16 +110,28 @@ export default function SignupPage() {
               )}
             </div>
 
-
-            <Input
-              id="password"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
-            />
+            <div className="relative flex items-center justify-between mt-4">
+              <Input
+                id="password"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+              />
+              {showConfirmPassword ? (
+                <FaRegEye
+                  onClick={() => setShowConfirmPassword(false)}
+                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                />
+              ) : (
+                <FaRegEyeSlash
+                  onClick={() => setShowConfirmPassword(true)}
+                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                />
+              )}
+            </div>
 
             <div className="text-right mt-2">
               <Link

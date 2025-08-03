@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import StatisticsSection from './StatisticsSection';
-
-
+import StatisticsSection from "./StatisticsSection";
 import {
   ChevronRight,
   ChevronUp,
@@ -13,6 +11,7 @@ import {
 } from "lucide-react";
 import { getSession } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
+import Navbar from "@/components/Navbar";
 
 const mockTransactions = [
   {
@@ -67,13 +66,13 @@ const mockTaxFilings = [
 ];
 
 export default function DashboardPage() {
-  const [username, setUserName] = useState<string | undefined>(undefined);
+  const [username, setUsername] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     async function fetchSession() {
       const { session, error } = await getSession();
       if (session && error === null) {
-        setUserName(session.name);
+        setUsername(session.name);
       }
     }
     fetchSession();
@@ -81,6 +80,10 @@ export default function DashboardPage() {
 
   return (
     <>
+      <Navbar
+        title="Dashboard"
+        description="Send and receive funds with pleasure."
+      />
       <h1 className="text-3xl font-bold text-gray-900 mb-6">
         Hello, {username} !
       </h1>

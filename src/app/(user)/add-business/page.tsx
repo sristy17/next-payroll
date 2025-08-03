@@ -1,10 +1,16 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Bell,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   ArrowLeft,
   Building2,
   MapPin,
@@ -12,9 +18,10 @@ import {
   User,
   Briefcase,
 } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AddBusiness() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,12 +58,16 @@ export default function AddBusiness() {
     }));
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    //Implement business creation logic here
-    // For now, simulate API call
     setTimeout(() => {
       console.log("Business data:", formData);
       setIsSubmitting(false);
@@ -70,60 +81,22 @@ export default function AddBusiness() {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 p-6 md:p-8 overflow-y-auto">
-        <header className="flex items-center justify-between mb-8">
-          <div className="relative flex items-center w-80">
-            <svg
-              className="absolute left-3 text-gray-400 w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 w-full"
-            />
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Button
-              onClick={handleGoBack}
-              variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-            <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
-            <div className="flex items-center cursor-pointer">
-              <Image
-                src="/user-avatar.png"
-                alt="User Avatar"
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1">
-          <div className="flex items-center mb-6">
-            <Building2 className="w-8 h-8 text-green-600 mr-3" />
-            <div>
+      <div className="flex-1 flex flex-col pl-10 pr-8 pt-8">
+        <Navbar
+          title="ITR - 4 (Sugam)"
+          description="Simplified income tax return form for individuals and small businesses."
+        />
+        <main className="flex-1 pb-2 flex flex-col justify-between pt-0 max-w-none">
+          <div className="flex flex-col gap-2">
+            <div className="flex">
+              <Building2 className="w-8 h-8 text-green-600 mr-3" />
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Add New Business
               </h1>
-              <p className="text-gray-600">
-                Set up your business profile for payroll and tax management
-              </p>
             </div>
+            <p className="text-gray-600 mb-3">
+              Set up your business profile for payroll and tax management
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -134,11 +107,10 @@ export default function AddBusiness() {
                 Basic Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Business Name *
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="businessName">Business Name *</Label>
                   <Input
+                    id="businessName"
                     name="businessName"
                     value={formData.businessName}
                     onChange={handleInputChange}
@@ -147,38 +119,41 @@ export default function AddBusiness() {
                     className="w-full"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Business Type *
-                  </label>
-                  <select
-                    name="businessType"
+                <div className="space-y-2">
+                  <Label htmlFor="businessType">Business Type *</Label>
+                  <Select
                     value={formData.businessType}
-                    onChange={handleInputChange}
+                    onValueChange={(value: string) =>
+                      handleSelectChange("businessType", value)
+                    }
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                   >
-                    <option value="">Select business type</option>
-                    <option value="sole_proprietorship">
-                      Sole Proprietorship
-                    </option>
-                    <option value="partnership">Partnership</option>
-                    <option value="private_limited">
-                      Private Limited Company
-                    </option>
-                    <option value="public_limited">
-                      Public Limited Company
-                    </option>
-                    <option value="llp">Limited Liability Partnership</option>
-                    <option value="trust">Trust</option>
-                    <option value="society">Society</option>
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select business type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sole_proprietorship">
+                        Sole Proprietorship
+                      </SelectItem>
+                      <SelectItem value="partnership">Partnership</SelectItem>
+                      <SelectItem value="private_limited">
+                        Private Limited Company
+                      </SelectItem>
+                      <SelectItem value="public_limited">
+                        Public Limited Company
+                      </SelectItem>
+                      <SelectItem value="llp">
+                        Limited Liability Partnership
+                      </SelectItem>
+                      <SelectItem value="trust">Trust</SelectItem>
+                      <SelectItem value="society">Society</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Industry
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="industry">Industry</Label>
                   <Input
+                    id="industry"
                     name="industry"
                     value={formData.industry}
                     onChange={handleInputChange}
@@ -186,11 +161,10 @@ export default function AddBusiness() {
                     className="w-full"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Established Date
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="establishedDate">Established Date</Label>
                   <Input
+                    id="establishedDate"
                     name="establishedDate"
                     type="date"
                     value={formData.establishedDate}
@@ -208,11 +182,12 @@ export default function AddBusiness() {
                 Legal & Registration Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <Label htmlFor="registrationNumber">
                     Registration Number
-                  </label>
+                  </Label>
                   <Input
+                    id="registrationNumber"
                     name="registrationNumber"
                     value={formData.registrationNumber}
                     onChange={handleInputChange}
@@ -220,11 +195,10 @@ export default function AddBusiness() {
                     className="w-full"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    PAN Number *
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="panNumber">PAN Number *</Label>
                   <Input
+                    id="panNumber"
                     name="panNumber"
                     value={formData.panNumber}
                     onChange={handleInputChange}
@@ -234,11 +208,10 @@ export default function AddBusiness() {
                     maxLength={10}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    GST Number
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="gstNumber">GST Number</Label>
                   <Input
+                    id="gstNumber"
                     name="gstNumber"
                     value={formData.gstNumber}
                     onChange={handleInputChange}
@@ -257,26 +230,24 @@ export default function AddBusiness() {
                 Business Address
               </h2>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address *
-                  </label>
-                  <textarea
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address *</Label>
+                  <Textarea
+                    id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
                     placeholder="Enter complete business address"
                     required
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 resize-none"
+                    className="w-full resize-none"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      City *
-                    </label>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City *</Label>
                     <Input
+                      id="city"
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
@@ -285,11 +256,10 @@ export default function AddBusiness() {
                       className="w-full"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      State *
-                    </label>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State *</Label>
                     <Input
+                      id="state"
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
@@ -298,11 +268,10 @@ export default function AddBusiness() {
                       className="w-full"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      PIN Code *
-                    </label>
+                  <div className="space-y-2">
+                    <Label htmlFor="pincode">PIN Code *</Label>
                     <Input
+                      id="pincode"
                       name="pincode"
                       value={formData.pincode}
                       onChange={handleInputChange}
@@ -323,11 +292,10 @@ export default function AddBusiness() {
                 Contact Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Contact Person *
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="contactPerson">Contact Person *</Label>
                   <Input
+                    id="contactPerson"
                     name="contactPerson"
                     value={formData.contactPerson}
                     onChange={handleInputChange}
@@ -336,11 +304,10 @@ export default function AddBusiness() {
                     className="w-full"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email *</Label>
                   <Input
+                    id="email"
                     name="email"
                     type="email"
                     value={formData.email}
@@ -350,11 +317,10 @@ export default function AddBusiness() {
                     className="w-full"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone *
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone *</Label>
                   <Input
+                    id="phone"
                     name="phone"
                     type="tel"
                     value={formData.phone}
@@ -364,11 +330,10 @@ export default function AddBusiness() {
                     className="w-full"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Website
-                  </label>
+                <div className="space-y-2">
+                  <Label htmlFor="website">Website</Label>
                   <Input
+                    id="website"
                     name="website"
                     type="url"
                     value={formData.website}
@@ -385,17 +350,16 @@ export default function AddBusiness() {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Business Description
               </h2>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
                   placeholder="Brief description of your business activities..."
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 resize-none"
+                  className="w-full resize-none"
                 />
               </div>
             </div>
@@ -404,17 +368,21 @@ export default function AddBusiness() {
             <div className="flex gap-4 pt-6">
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 onClick={handleGoBack}
-                className="flex-1 rounded-lg font-medium text-gray-700 text-sm shadow-sm border-gray-300 hover:bg-gray-50"
+                className="flex-1 border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-xl py-3 transition-all duration-200"
               >
+                <ArrowLeft className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
               <Button
                 type="submit"
+                variant="default"
+                size="lg"
                 disabled={isSubmitting}
-                className="flex-1 bg-green-700 hover:bg-green-600 text-white rounded-lg font-medium text-sm shadow-sm flex items-center justify-center gap-2"
+                className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl py-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none border-green-600 hover:border-green-700"
               >
+                <Building2 className="w-4 h-4 mr-2" />
                 {isSubmitting ? "Creating Business..." : "Create Business"}
               </Button>
             </div>

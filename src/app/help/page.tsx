@@ -11,20 +11,20 @@ import {
 
 export default function HelpCenterPage() {
 
-  const topic1 = {
-  title: 'System Onboarding',
-  desc: 'Set up your business, add users, and start managing payroll with ease.',
-};
-
-const topic2 = {
-  title: 'Payroll & Tax Filing',
-  desc: 'Automate salary disbursement, ITR-1/2, and GST returns with smart workflows.',
-};
-
-const topic3 = {
-  title: 'AI Assistant & Insights',
-  desc: 'Using Gemini AI for personalized tax-saving tips and anomaly detection.',
-};
+  const helpTopics = [
+    {
+      title: 'System Onboarding',
+      desc: 'Set up your business, add users, and start managing payroll with ease.',
+    },
+    {
+      title: 'Payroll & Tax Filing',
+      desc: 'Automate salary disbursement, ITR-1/2, and GST returns with smart workflows.',
+    },
+    {
+      title: 'AI Assistant & Insights',
+      desc: 'Using Gemini AI for personalized tax-saving tips and anomaly detection.',
+    },
+  ];
 
   const faqArticles = [
     {
@@ -69,18 +69,12 @@ const topic3 = {
       <div className="text-center mb-8">
         <h2 className="text-2xl font-semibold text-green-800 mb-6">Explore Topics</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h3 className="text-lg font-semibold mb-2">{topic1.title}</h3>
-            <p className="text-gray-600 text-sm">{topic1.desc}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold mb-2">{topic2.title}</h3>
-            <p className="text-gray-600 text-sm">{topic2.desc}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold mb-2">{topic3.title}</h3>
-            <p className="text-gray-600 text-sm">{topic3.desc}</p>
-          </div>
+          {helpTopics.map((topic, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-sm border p-6">
+              <h3 className="text-lg font-semibold mb-2">{topic.title}</h3>
+              <p className="text-gray-600 text-sm">{topic.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
 

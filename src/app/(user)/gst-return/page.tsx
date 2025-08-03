@@ -33,7 +33,7 @@ interface AutoGSTData {
 }
 
 export default function GstReturn() {
-  const [username, setUserName] = useState<string | undefined>(undefined);
+  const [username, setUsername] = useState<string | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
   const [autoGSTData, setAutoGSTData] = useState<AutoGSTData>({
     totalSales: 125000,
@@ -53,7 +53,7 @@ export default function GstReturn() {
     async function fetchSession() {
       const { session, error } = await getSession();
       if (session && error === null) {
-        setUserName(session.name);
+        setUsername(session.name);
       }
     }
     fetchSession();
@@ -76,7 +76,6 @@ export default function GstReturn() {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
         <header className="flex items-center justify-between mb-8">
           <div className="relative flex items-center w-80">

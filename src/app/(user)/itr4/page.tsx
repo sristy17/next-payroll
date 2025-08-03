@@ -4,9 +4,6 @@ import { useEffect, useState } from "react";
 import { getSession } from "../../api/auth/auth";
 import GenerateButton from "@/components/GenerateButton";
 import Navbar from "@/components/Navbar";
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { Search, Bell } from "lucide-react";
 
 export default function Itr4() {
   const [username, setUsername] = useState<string | undefined>(undefined);
@@ -29,37 +26,6 @@ export default function Itr4() {
           title="ITR - 4 (Sugam)"
           description="Simplified income tax return form for individuals and small businesses."
         />
-        <header className="flex items-center w-full mb-8 gap-0">
-          <div className="relative flex items-center w-80 min-w-[320px]">
-            <Search className="absolute left-3 text-gray-400 size-5" />
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 w-full bg-white text-gray-900 text-base shadow-sm h-11"
-              disabled
-            />
-          </div>
-          <div className="flex-1" />
-          <div className="flex items-center gap-4 justify-end">
-            <Button
-              variant="default"
-              size="lg"
-              className="rounded-xl font-semibold text-white text-base shadow-md min-w-[200px] h-11 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900"
-            >
-              + Add Business
-            </Button>
-            <Bell className="size-7 text-gray-400 hover:text-gray-600 cursor-pointer" />
-            <div className="flex items-center ml-2">
-              <Image
-                src="/user-avatar.png"
-                alt="User Avatar"
-                width={44}
-                height={44}
-                className="rounded-full border-2 border-white shadow"
-              />
-            </div>
-          </div>
-        </header>
         <main className="flex-1 pb-2 pt-0 max-w-none">
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold text-gray-900">

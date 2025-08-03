@@ -1,27 +1,30 @@
 "use client";
 import React from "react";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface NavbarProps {
   title: string;
   description?: string;
 }
 
-export default function Navbar({ title, description}: NavbarProps) {
+export default function Navbar({ title, description }: Readonly<NavbarProps>) {
+  const router = useRouter();
   return (
     <header className="w-full mb-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+            {title}
+          </h1>
           {description && (
             <p className="text-gray-600 text-sm md:text-base">{description}</p>
           )}
         </div>
         <div className="flex items-center gap-3 md:gap-4">
-
           <div className="flex items-center justify-center h-12 w-40 md:w-64 lg:w-80">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -36,11 +39,10 @@ export default function Navbar({ title, description}: NavbarProps) {
 
           <div className="flex items-center justify-center h-10">
             <Button
-              variant="default"
-              size="lg"
-              className="rounded-xl font-semibold text-white text-base shadow-md min-w-[120px] md:min-w-[160px] lg:min-w-[200px] h-12 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900"
+              className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 flex items-center gap-2"
+              onClick={() => router.push("/add-business")}
             >
-              + Add Business
+              <Plus className="w-4 h-4" /> Add Business
             </Button>
           </div>
 
@@ -58,7 +60,7 @@ export default function Navbar({ title, description}: NavbarProps) {
             />
           </div>
         </div>
-        </div>
+      </div>
     </header>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,18 +11,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Bell,
   ArrowLeft,
   Building2,
   MapPin,
   Calendar,
   User,
   Briefcase,
-  Search,
 } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AddBusiness() {
@@ -84,51 +81,22 @@ export default function AddBusiness() {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 p-6 md:p-8 overflow-y-auto">
-        <header className="flex items-center justify-between mb-8">
-          <div className="relative flex items-center w-80">
-            <Search className="absolute left-3 text-gray-400 w-5 h-5" />
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 w-full"
-            />
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Button
-              onClick={handleGoBack}
-              variant="secondary"
-              className="bg-white border-2 border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-            <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
-            <div className="flex items-center cursor-pointer">
-              <Image
-                src="/user-avatar.png"
-                alt="User Avatar"
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1">
-          <div className="flex items-center mb-6">
-            <Building2 className="w-8 h-8 text-green-600 mr-3" />
-            <div>
+      <div className="flex-1 flex flex-col pl-10 pr-8 pt-8">
+        <Navbar
+          title="ITR - 4 (Sugam)"
+          description="Simplified income tax return form for individuals and small businesses."
+        />
+        <main className="flex-1 pb-2 flex flex-col justify-between pt-0 max-w-none">
+          <div className="flex flex-col gap-2">
+            <div className="flex">
+              <Building2 className="w-8 h-8 text-green-600 mr-3" />
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Add New Business
               </h1>
-              <p className="text-gray-600">
-                Set up your business profile for payroll and tax management
-              </p>
             </div>
+            <p className="text-gray-600 mb-3">
+              Set up your business profile for payroll and tax management
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">

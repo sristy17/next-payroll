@@ -1,5 +1,6 @@
 "use client"
-import Sidebar from "@/components/sidebar";
+
+import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bell, Search, Plus, FileText } from "lucide-react";

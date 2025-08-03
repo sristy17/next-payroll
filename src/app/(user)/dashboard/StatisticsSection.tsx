@@ -228,7 +228,7 @@ export default function StatisticsSection() {
                   >
                     {spendingBreakdown.map((entry, idx) => (
                       <Cell
-                        key={`cell-${entry.value}`}
+                        key={`cell-${entry.name}`}
                         fill={COLORS[idx % COLORS.length]}
                       />
                     ))}

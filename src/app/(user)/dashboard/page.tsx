@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import StatisticsSection from './StatisticsSection';
+import StatisticsSection from "./StatisticsSection";
 import {
   ChevronRight,
   ChevronUp,
@@ -80,7 +80,7 @@ export default function DashboardPage() {
 
   return (
     <>
-    <Navbar
+      <Navbar
         title="Dashboard"
         description="Send and receive funds with pleasure."
       />

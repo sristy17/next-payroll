@@ -4,9 +4,9 @@
 
 We currently support and maintain the following versions of this project:
 
-| Version | Supported          |
-|---------|--------------------|
-| Latest  | ✅                 |
+| Version | Supported |
+|---------|------------|
+| 0.1.0   | ✅ |
 | Older   | ❌ (No longer supported — please upgrade) |
 
 If you are using an older version, we recommend upgrading to the latest release for security and stability.

@@ -1,10 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
-  Bell,
-  Plus,
   FileText,
   AlertCircle,
   CheckCircle2,
@@ -15,8 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSession } from "@/app/api/auth/auth";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import Navbar from "@/components/Navbar";
 
 interface AutoGSTData {
   totalSales: number;
@@ -46,7 +42,6 @@ export default function GstReturn() {
     nextDueDate: "2025-01-20",
     filingStatus: "pending",
   });
-  const router = useRouter();
 
   useEffect(() => {
     async function fetchSession() {
@@ -63,7 +58,9 @@ export default function GstReturn() {
 
     setTimeout(() => {
       console.log("Auto-filing GST return with tracked data:", autoGSTData);
-      alert("GST Return file./src/app/(user)/gst-return/page.tsx./src/app/(user)/gst-return/page.tsxd automatically based on your transaction data!");
+      alert(
+        "GST Return file./src/app/(user)/gst-return/page.tsx./src/app/(user)/gst-return/page.tsxd automatically based on your transaction data!"
+      );
       setAutoGSTData((prev) => ({
         ...prev,
         filingStatus: "filed",
@@ -76,62 +73,18 @@ export default function GstReturn() {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="flex-1 p-6 md:p-8 overflow-y-auto">
-        <header className="flex items-center justify-between mb-8">
-          <div className="relative flex items-center w-80">
-            <svg
-              className="absolute left-3 text-gray-400 w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 w-full"
-            />
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Button
-              className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 flex items-center gap-2"
-              onClick={() => router.push("/add-business")}
-            >
-              <Plus className="w-4 h-4" /> Add Business
-            </Button>
-            <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
-            <div className="flex items-center cursor-pointer">
-              <Image
-                src="/user-avatar.png"
-                alt="User Avatar"
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
-            </div>
-          </div>
-        </header>
-
+        <Navbar
+          title="Automated GST Return Filing"
+          description="Your GST returns are automatically calculated and filed based on
+              your transaction data."
+        />
         <main className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">
             {username ? `Hello, ${username}!` : "Hello!"}
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-800 text-sm mb-4">
             Your GST returns are automatically calculated and filed based on
             your transaction data.
-          </p>
-
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Automated GST Return Filing
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Next PAY automatically tracks all your business transactions and
-            calculates your GST liabilities in real-time. No manual data entry
-            required - we handle everything from invoice tracking to tax
-            calculations and filing.
           </p>
 
           <div className="flex items-center mb-6">

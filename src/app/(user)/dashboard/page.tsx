@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
+import StatisticsSection from "./StatisticsSection";
 import {
   ChevronRight,
   ChevronUp,
@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { getSession } from "@/app/api/auth/auth";
 import { useState, useEffect } from "react";
+import Navbar from "@/components/Navbar";
 
 const mockTransactions = [
   {
@@ -65,13 +66,13 @@ const mockTaxFilings = [
 ];
 
 export default function DashboardPage() {
-  const [username, setUserName] = useState<string | undefined>(undefined);
+  const [username, setUsername] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     async function fetchSession() {
       const { session, error } = await getSession();
       if (session && error === null) {
-        setUserName(session.name);
+        setUsername(session.name);
       }
     }
     fetchSession();
@@ -79,6 +80,10 @@ export default function DashboardPage() {
 
   return (
     <>
+      <Navbar
+        title="Dashboard"
+        description="Send and receive funds with pleasure."
+      />
       <h1 className="text-3xl font-bold text-gray-900 mb-6">
         Hello, {username} !
       </h1>
@@ -218,10 +223,7 @@ export default function DashboardPage() {
 
       <div className="bg-white p-6 rounded-lg shadow-sm mt-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Statistics</h2>
-        <div className="w-full h-64 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-          [Graph Placeholder - Integrate your charting library here, e.g.,
-          Chart.js, Recharts, or a custom SVG]
-        </div>
+        <StatisticsSection />
         <div className="flex justify-center items-center space-x-6 mt-4 text-sm">
           <div className="flex items-center">
             <Dot className="w-6 h-6 text-purple-600" />

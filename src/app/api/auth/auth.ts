@@ -19,6 +19,18 @@ export async function signUp(
 ): Promise<{ user: User | null; error: { message: string } | null }> {
   try {
     
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return {
+        user: null,
+        error: {
+          message:
+            "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
+        },
+      };
+    }
+    
     const totalRounds = 10;
     const hashedPassword = await bcrypt.hash(password, totalRounds);
 

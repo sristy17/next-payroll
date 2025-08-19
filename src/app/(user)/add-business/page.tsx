@@ -13,7 +13,7 @@ import {
 import {
   ArrowLeft,
   Building2,
-  MapPin,
+  // MapPin,
   Calendar,
   User,
   Briefcase,
@@ -213,7 +213,7 @@ export default function AddBusiness() {
             </div>
 
             {/* Address Information */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <MapPin className="w-5 h-5 mr-2 text-green-600" />
                 Business Address
@@ -272,7 +272,7 @@ export default function AddBusiness() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Contact Information */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

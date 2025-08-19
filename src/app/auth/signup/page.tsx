@@ -132,15 +132,6 @@ export default function SignupPage() {
                 />
               )}
             </div>
-
-            <div className="text-right mt-2">
-              <Link
-                href="#"
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
-                Forgot password?
-              </Link>
-            </div>
           </div>
 
           <Button

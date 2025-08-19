@@ -1,5 +1,6 @@
 import { supabase } from "@/helpers/supabase";
 import { User, UserSession } from "./types";
+import bcrypt from "bcryptjs";
 
 /**
  * Registers a new user directly into the 'users' table.
@@ -17,14 +18,28 @@ export async function signUp(
   profilePic: string | null = null
 ): Promise<{ user: User | null; error: { message: string } | null }> {
   try {
-    const plainTextPassword = password;
+    
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return {
+        user: null,
+        error: {
+          message:
+            "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
+        },
+      };
+    }
+    
+    const totalRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, totalRounds);
 
     const { data, error: supabaseError } = await supabase
       .from("users")
       .insert({
         name,
         email,
-        password_hash: plainTextPassword,
+        password_hash: hashedPassword,
         is_email_verified: false,
         profilePic,
       })
@@ -86,7 +101,7 @@ export async function signIn(
       };
     }
 
-    const isPasswordValid = password === userFromDb.password_hash;
+    const isPasswordValid = await bcrypt.compare(password, userFromDb.password_hash);
 
     if (!isPasswordValid) {
       return {

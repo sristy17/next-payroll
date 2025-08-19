@@ -14,11 +14,9 @@ import bcrypt from "bcryptjs";
 export async function signUp(
   name: string,
   email: string,
-  password: string,
-  profilePic: string | null = null
+  password: string
 ): Promise<{ user: User | null; error: { message: string } | null }> {
   try {
-    
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
     if (!passwordRegex.test(password)) {
@@ -30,18 +28,16 @@ export async function signUp(
         },
       };
     }
-    
-    const totalRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, totalRounds);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const { data, error: supabaseError } = await supabase
       .from("users")
       .insert({
         name,
         email,
-        password_hash: hashedPassword,
-        is_email_verified: false,
-        profilePic,
+        password: hashedPassword,
+        is_admin: false,
       })
       .select()
       .single();
@@ -89,7 +85,7 @@ export async function signIn(
     const { data: userFromDb, error: supabaseError } = await supabase
       .from("users")
       .select(
-        "id, name, email, password_hash, is_email_verified, profilePic, created_at, updated_at"
+        "id, name, email, password, is_admin, profile_pic, created_at, updated_at"
       )
       .eq("email", email)
       .single();
@@ -101,7 +97,7 @@ export async function signIn(
       };
     }
 
-    const isPasswordValid = await bcrypt.compare(password, userFromDb.password_hash);
+    const isPasswordValid = await bcrypt.compare(password, userFromDb.password);
 
     if (!isPasswordValid) {
       return {
@@ -112,11 +108,11 @@ export async function signIn(
     }
 
     if (typeof window !== "undefined") {
-      localStorage.setItem("user_session_id", userFromDb.id);
-      localStorage.setItem("user_session_email", userFromDb.email);
+      localStorage.setItem("user_id", userFromDb.id);
+      localStorage.setItem("user_email", userFromDb.email);
     }
 
-    delete userFromDb.password_hash;
+    delete userFromDb.password;
 
     return {
       user: userFromDb as User,
@@ -147,8 +143,8 @@ export async function signOut(): Promise<{
 }> {
   try {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("user_session_id");
-      localStorage.removeItem("user_session_email");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("user_email");
     }
     return { error: null };
   } catch (err: unknown) {
@@ -173,8 +169,8 @@ export async function getSession(): Promise<{
 }> {
   try {
     if (typeof window !== "undefined") {
-      const userId = localStorage.getItem("user_session_id");
-      const userEmail = localStorage.getItem("user_session_email");
+      const userId = localStorage.getItem("user_id");
+      const userEmail = localStorage.getItem("user_email");
 
       const { data } = await supabase
         .from("users")
@@ -222,9 +218,7 @@ export async function getUser(): Promise<{
 
     const { data: userFromDb, error: supabaseError } = await supabase
       .from("users")
-      .select(
-        "id, name, email, is_email_verified, profilePic, created_at, updated_at"
-      )
+      .select("id, name, email, is_admin, profile_pic, created_at, updated_at")
       .eq("id", session.userId)
       .single();
 

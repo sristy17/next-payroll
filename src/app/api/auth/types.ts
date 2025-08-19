@@ -2,8 +2,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  is_email_verified: boolean;
-  profilePic: string | null;
+  is_admin: boolean;
+  profile_pic: string | null;
   created_at: string;
   updated_at: string;
 }

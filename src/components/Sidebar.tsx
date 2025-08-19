@@ -1,8 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "@/app/api/auth/auth";
 
 import {
   LayoutDashboard,
@@ -16,6 +17,7 @@ import { Button } from "./ui/button";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const isActive = (path: string) => pathname === path;
 
   const navItems = [
@@ -28,8 +30,9 @@ export default function Sidebar() {
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
-  const handleLogout = () => {
-    console.log("Logout clicked");
+  const handleLogout = async () => {
+    await signOut();
+    router.push("/auth/login");
   };
 
   return (

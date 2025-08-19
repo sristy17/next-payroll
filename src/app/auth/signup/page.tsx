@@ -8,9 +8,7 @@ import Link from "next/link";
 import { signUp } from "@/app/api/auth/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-
-import { FaRegEye } from "react-icons/fa";
-import { FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 
 export default function SignupPage() {

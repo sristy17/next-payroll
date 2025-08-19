@@ -1,44 +1,27 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { getSession } from "../../api/auth/auth";
-import GenerateButton from "@/components/GenerateButton";
+import { useState } from "react";
+import ITR1Request from "@/app/(user)/itr1/_components/ITR1Request";
 import Navbar from "@/components/Navbar";
 
 export default function Itr1() {
-  const [username, setUsername] = useState<string | undefined>(undefined);
   const [showPending, setShowPending] = useState(false);
-
-  useEffect(() => {
-    async function fetchSession() {
-      const { session, error } = await getSession();
-      if (session && error === null) {
-        setUsername(session.name);
-      }
-    }
-    fetchSession();
-  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="flex-1 flex flex-col pl-10 pr-8 pt-8">
+      <div className="flex-1 flex flex-col p-4">
         <Navbar
           title="ITR - 1 (Sahaj)"
           description="Generate your ITR-1 (Sahaj) form easily."
         />
-        <main className="flex-1 pb-2 flex flex-col justify-between pt-0 max-w-none">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {username ? `Hello, ${username}!` : "Hello!"}
-            </h1>
-            <p className="text-gray-800 text-sm">
-              Send and receive funds with pleasure.
-            </p>
-            {showPending ? (
-              <div className="w-full max-w-full">
-                <GenerateButton />
-              </div>
-            ) : (
+
+        <main className="flex-1 flex flex-col">
+          {showPending ? (
+            <div className="flex-1">
+              <ITR1Request />
+            </div>
+          ) : (
+            <div className="flex flex-col flex-1 justify-between">
               <div className="flex flex-col gap-6">
                 <h2 className="text-base font-bold text-gray-900 mt-5">
                   Generate ITR - 1 (Sahaj)
@@ -69,17 +52,16 @@ export default function Itr1() {
                   government regulations.
                 </p>
               </div>
-            )}
-          </div>
-          {!showPending && (
-            <Button
-              variant="default"
-              size="lg"
-              className="w-full rounded-xl font-semibold text-white text-base shadow-md mt-4 mb-5 h-11 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900"
-              onClick={() => setShowPending(true)}
-            >
-              + Generate
-            </Button>
+
+              <Button
+                variant="default"
+                size="lg"
+                className="w-full rounded-xl font-semibold text-white text-base shadow-md mt-4 mb-5 h-11 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900"
+                onClick={() => setShowPending(true)}
+              >
+                + Generate
+              </Button>
+            </div>
           )}
         </main>
       </div>

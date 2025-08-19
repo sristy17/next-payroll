@@ -80,25 +80,14 @@ export default function AddBusiness() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <div className="flex-1 flex flex-col pl-10 pr-8 pt-8">
+    <div className="flex h-screen bg-gray-100">
+      <div className="flex-1 flex flex-col p-4 overflow-y-auto">
         <Navbar
-          title="ITR - 4 (Sugam)"
-          description="Simplified income tax return form for individuals and small businesses."
+          title="Add New Business"
+          description="Set up your business profile for payroll and tax management"
         />
-        <main className="flex-1 pb-2 flex flex-col justify-between pt-0 max-w-none">
-          <div className="flex flex-col gap-2">
-            <div className="flex">
-              <Building2 className="w-8 h-8 text-green-600 mr-3" />
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Add New Business
-              </h1>
-            </div>
-            <p className="text-gray-600 mb-3">
-              Set up your business profile for payroll and tax management
-            </p>
-          </div>
 
+        <main className="flex-1">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Information */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

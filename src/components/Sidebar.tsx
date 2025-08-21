@@ -3,7 +3,9 @@
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "@/app/api/auth/auth";
+import { signOut,getUser } from "@/app/api/auth/auth";
+import { User } from "@/app/api/auth/types";
+import { useEffect,useState } from "react";
 
 import {
   LayoutDashboard,
@@ -19,6 +21,22 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const isActive = (path: string) => pathname === path;
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { user, error } = await getUser();
+      if (error) 
+      {
+        setUser(null);
+      } 
+      else 
+      {
+        setUser(user);
+      }
+  }
+  fetchUser();
+}, []);
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -82,10 +100,10 @@ export default function Sidebar() {
           />
           <div className="min-w-0">
             <p className="text-white font-semibold text-sm md:text-base truncate">
-              Bisler Pandey
+              {user?.name || "Guest"}
             </p>
             <p className="text-gray-400 text-xs md:text-sm truncate">
-              bisler.pandey@gmail.com
+              {user?.email || "guest@example.com"}
             </p>
           </div>
         </div>

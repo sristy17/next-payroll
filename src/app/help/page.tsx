@@ -1,4 +1,5 @@
-'use client';
+"use client";
+import React from "react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -54,6 +55,11 @@ export default function HelpCenterPage() {
     },
   ];
 
+  const [showModal, setShowModal] = React.useState(false);
+
+  const handleContactClick = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="text-center mb-12">
@@ -95,8 +101,29 @@ export default function HelpCenterPage() {
         <p className="text-gray-600 mb-4">
           Reach out to our team for support on setup, filings, or tailored automation.
         </p>
-        <Button className="bg-green-700 hover:bg-green-800 text-white px-6 py-2">Contact Us</Button>
+        <Button className="bg-green-700 hover:bg-green-800 text-white px-6 py-2" onClick={handleContactClick}>Contact Us</Button>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={handleCloseModal}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold mb-4 text-green-800">Contact Us</h2>
+            <form className="space-y-4">
+              <Input type="text" placeholder="Your Name" required />
+              <Input type="email" placeholder="Your Email" required />
+              <textarea className="w-full p-2 border rounded" rows={4} placeholder="How can we help you?" required />
+              <Button type="submit" className="bg-green-700 hover:bg-green-800 text-white w-full">Send Message</Button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

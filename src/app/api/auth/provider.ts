@@ -4,12 +4,6 @@ import bcrypt from "bcryptjs";
 
 /**
  * Registers a new user directly into the 'users' table.
- *
- * @param {string} name - The user's name.
- * @param {string} email - The user's email address.
- * @param {string} password - The user's chosen password (WILL BE STORED AS PLAIN TEXT!).
- * @param {string | null} [profilePic=null] - Optional URL for the user's profile picture.
- * @returns {Promise<{ user: User | null, error: { message: string } | null }>} An object containing the user data or an error.
  */
 export async function signUp(
   name: string,
@@ -54,24 +48,20 @@ export async function signUp(
 
     return { user: data as User, error: null };
   } catch (err: unknown) {
-    let errorMessage = "An unexpected error occurred during signup.";
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    }
-    console.error("Catch-all Signup error:", err);
     return {
       user: null,
-      error: { message: errorMessage },
+      error: {
+        message:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred during signup.",
+      },
     };
   }
 }
 
 /**
- * Logs in a user by verifying credentials against the 'users' table.
- *
- * @param {string} email - The user's email address.
- * @param {string} password - The user's password.
- * @returns {Promise<{ user: User | null, session: UserSession | null, error: { message: string } | null }>} An object containing the user data, session, or an error.
+ * Logs in a user by verifying credentials.
  */
 export async function signIn(
   email: string,
@@ -89,22 +79,14 @@ export async function signIn(
       )
       .eq("email", email)
       .single();
+
     if (supabaseError || !userFromDb) {
-      return {
-        user: null,
-        session: null,
-        error: { message: "Invalid credentials." },
-      };
+      return { user: null, session: null, error: { message: "Invalid credentials." } };
     }
 
     const isPasswordValid = await bcrypt.compare(password, userFromDb.password);
-
     if (!isPasswordValid) {
-      return {
-        user: null,
-        session: null,
-        error: { message: "Invalid credentials." },
-      };
+      return { user: null, session: null, error: { message: "Invalid credentials." } };
     }
 
     if (typeof window !== "undefined") {
@@ -120,27 +102,23 @@ export async function signIn(
       error: null,
     };
   } catch (err: unknown) {
-    let errorMessage = "An unexpected error occurred during sign-in.";
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    }
-    console.error("Catch-all Sign-in error:", err);
     return {
       user: null,
       session: null,
-      error: { message: errorMessage },
+      error: {
+        message:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred during sign-in.",
+      },
     };
   }
 }
 
 /**
- * Logs out the current user by clearing the client-side "session".
- * This is only effective for client-side state.
- * @returns {Promise<{ error: { message: string } | null }>} An object containing an error if logout fails.
+ * Logs out the current user.
  */
-export async function signOut(): Promise<{
-  error: { message: string } | null;
-}> {
+export async function signOut(): Promise<{ error: { message: string } | null }> {
   try {
     if (typeof window !== "undefined") {
       localStorage.removeItem("user_id");
@@ -148,20 +126,19 @@ export async function signOut(): Promise<{
     }
     return { error: null };
   } catch (err: unknown) {
-    let errorMessage = "An unexpected error occurred during sign-out.";
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    }
-    console.error("Catch-all Sign-out error:", err);
     return {
-      error: { message: errorMessage },
+      error: {
+        message:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred during sign-out.",
+      },
     };
   }
 }
 
 /**
- * Retrieves the current authenticated user's "session" from client-side storage.
- * @returns {Promise<{ session: UserSession | null, error: { message: string } | null }>} An object containing the current session or an error.
+ * Retrieves the current session from localStorage.
  */
 export async function getSession(): Promise<{
   session: UserSession | null;
@@ -187,21 +164,20 @@ export async function getSession(): Promise<{
     }
     return { session: null, error: null };
   } catch (err: unknown) {
-    let errorMessage = "An unexpected error occurred getting the session.";
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    }
-    console.error("Catch-all Get session error:", err);
     return {
       session: null,
-      error: { message: errorMessage },
+      error: {
+        message:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred getting the session.",
+      },
     };
   }
 }
 
 /**
- * Retrieves the current authenticated user from the 'users' table based on client-side "session".
- * @returns {Promise<{ user: User | null, error: { message: string } | null }>} An object containing the current user or an error.
+ * Retrieves the current user from DB.
  */
 export async function getUser(): Promise<{
   user: User | null;
@@ -209,12 +185,8 @@ export async function getUser(): Promise<{
 }> {
   try {
     const { session, error: sessionError } = await getSession();
-    if (sessionError) {
-      return { user: null, error: sessionError };
-    }
-    if (!session?.userId) {
-      return { user: null, error: null };
-    }
+    if (sessionError) return { user: null, error: sessionError };
+    if (!session?.userId) return { user: null, error: null };
 
     const { data: userFromDb, error: supabaseError } = await supabase
       .from("users")
@@ -224,29 +196,25 @@ export async function getUser(): Promise<{
 
     if (supabaseError || !userFromDb) {
       await signOut();
-      return {
-        user: null,
-        error: { message: "User not found or session invalid." },
-      };
+      return { user: null, error: { message: "User not found or session invalid." } };
     }
 
     return { user: userFromDb as User, error: null };
   } catch (err: unknown) {
-    let errorMessage = "An unexpected error occurred getting the user.";
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    }
-    console.error("Catch-all Get user error:", err);
     return {
       user: null,
-      error: { message: errorMessage },
+      error: {
+        message:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred getting the user.",
+      },
     };
   }
 }
 
 /**
- * A utility function for a mock access token based on the client-side session.
- * @returns {Promise<string | null>} A mock access token or null if no session.
+ * A mock access token from session.
  */
 export async function getSupabaseAccessToken(): Promise<string | null> {
   const { session } = await getSession();

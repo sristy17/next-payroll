@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
-import { signIn } from "@/app/api/auth/auth";
+import { signIn } from "@/app/api/auth/provider";
 
 export default function LoginPage() {
   const router = useRouter();

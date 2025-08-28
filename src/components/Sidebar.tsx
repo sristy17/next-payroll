@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "@/app/api/auth/auth";
+import { signOut } from "@/app/api/auth/provider";
 
 import {
   LayoutDashboard,

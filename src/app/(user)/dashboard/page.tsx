@@ -9,9 +9,8 @@ import {
   Dot,
   MoreHorizontal,
 } from "lucide-react";
-import { getSession } from "@/app/api/auth/auth";
-import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
+import { useSessionQuery } from "@/app/api/auth/query";
 
 const mockTransactions = [
   {
@@ -66,24 +65,14 @@ const mockTaxFilings = [
 ];
 
 export default function DashboardPage() {
-  const [username, setUsername] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    async function fetchSession() {
-      const { session, error } = await getSession();
-      if (session && error === null) {
-        setUsername(session.name);
-      }
-    }
-    fetchSession();
-  }, []);
+  const { data: username } = useSessionQuery();
 
   return (
     <div className="flex h-screen bg-gray-100">
       <div className="flex-1 flex flex-col p-4 overflow-y-auto">
         <Navbar
           title="Dashboard"
-          description={`Welcome ${username}. Send and receive funds with pleasure.`}
+          description={`Welcome ${username?.session?.name}. Send and receive funds with pleasure.`}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

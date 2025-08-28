@@ -5,56 +5,49 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { signUp } from "@/app/api/auth/auth";
+import { useSignUpMutation } from "@/app/api/auth/query";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-
 export default function SignupPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("")
-  const [loading, setLoading] = useState<boolean>(false);
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
-
   const router = useRouter();
+  const signUpMutation = useSignUpMutation();
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
 
-    if(password === "" || confirmPassword === "") {
-      setLoading(false);
+    if (password === "" || confirmPassword === "") {
       toast.error("Passwords field can't be empty");
       return;
     }
 
-    if(password !== confirmPassword){
-      setLoading(false);
+    if (password !== confirmPassword) {
       toast.error("Passwords must match");
       return;
     }
 
     const defaultName = email.split("@")[0] || "New User";
 
-    const { user, error } = await signUp(defaultName, email, password);
-
-    if (error) {
-      toast.error(`Could not sign-up: ${error.message}`, {
-        id: "sign-up",
-      });
-    } else if (user) {
-      toast.success("Sign-up Success", {
-        id: "sign-up",
-      });
-      router.push("/auth/login");
-    }
-    setLoading(false);
+    signUpMutation.mutate(
+      { name: defaultName, email, password },
+      {
+        onSuccess: (data) => {
+          if (!data.error) {
+            router.push("/auth/login");
+          }
+        },
+      }
+    );
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-sm p-8 rounded-lg shadow-lg">
@@ -84,8 +77,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-
-            <div className="realtive flex items-center justify-between ">
+            <div className="relative flex items-center justify-between">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -93,24 +85,24 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className=" flex-grow border-gray-300 focus:border-green-500 focus:ring-green-500"
+                className="flex-grow border-gray-300 focus:border-green-500 focus:ring-green-500"
               />
               {showPassword ? (
                 <FaRegEye
                   onClick={() => setShowPassword(false)}
-                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                  className="absolute right-3 text-gray-500 cursor-pointer"
                 />
               ) : (
                 <FaRegEyeSlash
                   onClick={() => setShowPassword(true)}
-                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                  className="absolute right-3 text-gray-500 cursor-pointer"
                 />
               )}
             </div>
 
             <div className="relative flex items-center justify-between mt-4">
               <Input
-                id="password"
+                id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm Password"
                 value={confirmPassword}
@@ -121,12 +113,12 @@ export default function SignupPage() {
               {showConfirmPassword ? (
                 <FaRegEye
                   onClick={() => setShowConfirmPassword(false)}
-                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                  className="absolute right-3 text-gray-500 cursor-pointer"
                 />
               ) : (
                 <FaRegEyeSlash
                   onClick={() => setShowConfirmPassword(true)}
-                  className="absolute text-gray-500 cursor-pointer ml-[290px]"
+                  className="absolute right-3 text-gray-500 cursor-pointer"
                 />
               )}
             </div>
@@ -148,9 +140,9 @@ export default function SignupPage() {
                        hover:from-green-700 hover:to-green-500
                        focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
                        transition-all duration-200 ease-in-out"
-            disabled={loading}
+            disabled={signUpMutation.isPending}
           >
-            {loading ? "Signing up..." : "Signup"}
+            {signUpMutation.isPending ? "Signing up..." : "Signup"}
           </Button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">

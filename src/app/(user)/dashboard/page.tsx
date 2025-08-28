@@ -72,7 +72,11 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col p-4 overflow-y-auto">
         <Navbar
           title="Dashboard"
+<<<<<<< HEAD
           description={`Welcome ${username?.session?.name}. Send and receive funds with pleasure.`}
+=======
+          description={`Welcome ${username}. Send and receive funds with pleasure.`}
+>>>>>>> dev
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

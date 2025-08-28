@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "@/app/api/auth/provider";
+import { useSessionQuery } from "@/app/api/auth/query";
 
 import {
   LayoutDashboard,
@@ -16,6 +17,8 @@ import {
 import { Button } from "./ui/button";
 
 export default function Sidebar() {
+  const { data } = useSessionQuery();
+
   const pathname = usePathname();
   const router = useRouter();
   const isActive = (path: string) => pathname === path;
@@ -82,10 +85,10 @@ export default function Sidebar() {
           />
           <div className="min-w-0">
             <p className="text-white font-semibold text-sm md:text-base truncate">
-              Bisler Pandey
+              {data?.session?.name || "Guest"}
             </p>
             <p className="text-gray-400 text-xs md:text-sm truncate">
-              bisler.pandey@gmail.com
+              {data?.session?.email || "guest@example.com"}
             </p>
           </div>
         </div>

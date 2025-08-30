@@ -5,13 +5,26 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { useQuery } from "@tanstack/react-query";
+import { User } from "../app/api/auth/types"
+import { getUser } from "../app/api/auth/auth"
 interface NavbarProps {
   title: string;
   description?: string;
 }
 
 export default function Navbar({ title, description }: Readonly<NavbarProps>) {
+
+   // ✅ Fetch user with TanStack Query
+  const { data: user, isLoading } = useQuery<User | null>({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const { user, error } = await getUser();
+      if (error) return null;
+      return user;
+    },
+  });
+
   const router = useRouter();
   return (
     <header className="w-full mb-5">
@@ -52,11 +65,16 @@ export default function Navbar({ title, description }: Readonly<NavbarProps>) {
 
           <div className="flex items-center justify-center h-11 w-11">
             <Image
-              src="/user-avatar.png"
+              src={
+              user?.profile_pic
+                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_pictures/${user.profile_pic}?t=${Date.now()}`
+                : "/user-avatar.png"
+            }
               alt="User Avatar"
               width={44}
               height={44}
               className="rounded-full border-2 border-white shadow object-cover w-10 h-10 md:w-11 md:h-11"
+              unoptimized
             />
           </div>
         </div>

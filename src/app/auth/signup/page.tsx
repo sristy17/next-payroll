@@ -11,20 +11,19 @@ import { useRouter } from "next/navigation";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const router = useRouter();
   const signUpMutation = useSignUpMutation();
 
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (password === "" || confirmPassword === "") {
+    if (!password || !confirmPassword) {
       toast.error("Passwords field can't be empty");
       return;
     }
@@ -41,6 +40,7 @@ export default function SignupPage() {
       {
         onSuccess: (data) => {
           if (!data.error) {
+            toast.success("Account created successfully!");
             router.push("/auth/login");
           }
         },
@@ -50,7 +50,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <div className="w-full max-w-sm p-8 rounded-lg shadow-lg">
+      <div className="w-full max-w-sm p-8 rounded-lg shadow-lg bg-white">
         <div className="flex flex-col items-center mb-6">
           <Image
             src={"/logo.png"}
@@ -65,63 +65,60 @@ export default function SignupPage() {
           Welcome to Next Pay, let&apos;s create your account
         </p>
         <form onSubmit={handleSignUp} className="space-y-4">
-          <div>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="border-gray-300 focus:border-green-500 focus:ring-green-500"
-            />
-          </div>
-          <div>
-            <div className="relative flex items-center justify-between">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="flex-grow border-gray-300 focus:border-green-500 focus:ring-green-500"
-              />
-              {showPassword ? (
-                <FaRegEye
-                  onClick={() => setShowPassword(false)}
-                  className="absolute right-3 text-gray-500 cursor-pointer"
-                />
-              ) : (
-                <FaRegEyeSlash
-                  onClick={() => setShowPassword(true)}
-                  className="absolute right-3 text-gray-500 cursor-pointer"
-                />
-              )}
-            </div>
+          <Input
+            id="email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
 
-            <div className="relative flex items-center justify-between mt-4">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="pr-10 border-gray-300 focus:border-green-500 focus:ring-green-500"
+            />
+            {showPassword ? (
+              <FaRegEye
+                onClick={() => setShowPassword(false)}
+                className="absolute right-3 top-3 text-gray-500 cursor-pointer"
               />
-              {showConfirmPassword ? (
-                <FaRegEye
-                  onClick={() => setShowConfirmPassword(false)}
-                  className="absolute right-3 text-gray-500 cursor-pointer"
-                />
-              ) : (
-                <FaRegEyeSlash
-                  onClick={() => setShowConfirmPassword(true)}
-                  className="absolute right-3 text-gray-500 cursor-pointer"
-                />
-              )}
-            </div>
+            ) : (
+              <FaRegEyeSlash
+                onClick={() => setShowPassword(true)}
+                className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+              />
+            )}
+          </div>
+
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="pr-10 border-gray-300 focus:border-green-500 focus:ring-green-500"
+            />
+            {showConfirmPassword ? (
+              <FaRegEye
+                onClick={() => setShowConfirmPassword(false)}
+                className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+              />
+            ) : (
+              <FaRegEyeSlash
+                onClick={() => setShowConfirmPassword(true)}
+                className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+              />
+            )}
           </div>
 
           <Button

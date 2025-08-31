@@ -1,21 +1,34 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  signUp,
-  signIn,
-  signOut,
-  getUser,
-  getSession,
-} from "./provider";
-import { User, UserSession } from "./types";
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseMutationResult,
+  UseQueryResult,
+} from "@tanstack/react-query";
+import { signUp, signIn, signOut, getUser, getSession } from "./provider";
+import {
+  UserResponse,
+  SessionResponse,
+  AuthResponse,
+  SignUpResponse,
+  SignOutResponse,
+} from "./types";
 import toast from "react-hot-toast";
 
 /**
  * Mutation: Sign Up
  */
-export const useSignUpMutation = () => {
-  return useMutation({
-    mutationFn: ({ name, email, password }: { name: string; email: string; password: string }) =>
-      signUp(name, email, password),
+export const useSignUpMutation = (): UseMutationResult<
+  SignUpResponse,
+  Error,
+  { name: string; email: string; password: string }
+> => {
+  return useMutation<
+    SignUpResponse,
+    Error,
+    { name: string; email: string; password: string }
+  >({
+    mutationFn: ({ name, email, password }) => signUp(name, email, password),
     onSuccess: (data) => {
       if (data.error) {
         toast.error(data.error.message);
@@ -23,7 +36,7 @@ export const useSignUpMutation = () => {
         toast.success("Signed up successfully!");
       }
     },
-    onError: (err: Error) => {
+    onError: (err) => {
       toast.error(err.message || "Sign up failed");
     },
   });
@@ -32,10 +45,13 @@ export const useSignUpMutation = () => {
 /**
  * Mutation: Sign In
  */
-export const useSignInMutation = () => {
-  return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      signIn(email, password),
+export const useSignInMutation = (): UseMutationResult<
+  AuthResponse,
+  Error,
+  { email: string; password: string }
+> => {
+  return useMutation<AuthResponse, Error, { email: string; password: string }>({
+    mutationFn: ({ email, password }) => signIn(email, password),
     onSuccess: (data) => {
       if (data.error) {
         toast.error(data.error.message);
@@ -43,7 +59,7 @@ export const useSignInMutation = () => {
         toast.success("Logged in successfully!");
       }
     },
-    onError: (err: Error) => {
+    onError: (err) => {
       toast.error(err.message || "Sign in failed");
     },
   });
@@ -52,15 +68,23 @@ export const useSignInMutation = () => {
 /**
  * Mutation: Sign Out
  */
-export const useSignOutMutation = () => {
+export const useSignOutMutation = (): UseMutationResult<
+  SignOutResponse,
+  Error,
+  void
+> => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutation<SignOutResponse, Error, void>({
     mutationFn: signOut,
-    onSuccess: () => {
-      queryClient.clear();
-      toast.success("Signed out successfully!");
+    onSuccess: (data) => {
+      if (data.error) {
+        toast.error(data.error.message);
+      } else {
+        queryClient.clear();
+        toast.success("Signed out successfully!");
+      }
     },
-    onError: (err: Error) => {
+    onError: (err) => {
       toast.error(err.message || "Sign out failed");
     },
   });
@@ -69,8 +93,8 @@ export const useSignOutMutation = () => {
 /**
  * Query: Get Current Session
  */
-export const useSessionQuery = () => {
-  return useQuery<{ session: UserSession | null; error: { message: string } | null }>({
+export const useSessionQuery = (): UseQueryResult<SessionResponse, Error> => {
+  return useQuery<SessionResponse, Error>({
     queryKey: ["session"],
     queryFn: getSession,
     staleTime: 5 * 60 * 1000,
@@ -80,8 +104,8 @@ export const useSessionQuery = () => {
 /**
  * Query: Get Current User
  */
-export const useUserQuery = () => {
-  return useQuery<{ user: User | null; error: { message: string } | null }>({
+export const useUserQuery = (): UseQueryResult<UserResponse, Error> => {
+  return useQuery<UserResponse, Error>({
     queryKey: ["user"],
     queryFn: getUser,
     staleTime: 5 * 60 * 1000,

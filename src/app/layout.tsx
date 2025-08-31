@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import { AppThemeProvider } from "../components/ThemeProvider";
+import { AppThemeProvider } from "@/providers/ThemeProvider";
+import QueryProvider from "@/providers/QueryProvider";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -16,15 +17,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={`${raleway.variable} antialiased`}>
         <AppThemeProvider>
-          {children}
-          <Toaster position="top-center" />
+          <QueryProvider>
+            {children}
+            <Toaster position="top-center" />
+          </QueryProvider>
         </AppThemeProvider>
       </body>
     </html>

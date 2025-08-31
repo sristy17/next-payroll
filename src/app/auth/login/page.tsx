@@ -6,48 +6,37 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import toast from "react-hot-toast";
-import { signIn } from "@/app/api/auth/provider";
+import { useSignInMutation } from "@/app/api/auth/query";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const signInMutation = useSignInMutation();
 
   /**
-   * Handles the user login process using the signIn API.
-   * @param {React.FormEvent} e - The form event.
+   * Handles the user login process using React Query mutation.
    */
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
 
-    const { user, error } = await signIn(email, password);
-
-    if (error) {
-      toast.error(
-        error.message ||
-          "Invalid credentials. Please check your email and password.",
-        {
-          id: "login-error",
-        }
-      );
-    } else if (user) {
-      toast.success("Login successful!", {
-        id: "login-success",
-      });
-      router.push("/dashboard");
-    }
-    setLoading(false);
+    signInMutation.mutate(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          if (data.user) {
+            router.push("/dashboard");
+          }
+        },
+      }
+    );
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
-      {" "}
       <div className="flex-1 flex items-center justify-center p-4 md:p-8 relative">
         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg relative z-10">
-          {" "}
           <div className="flex flex-col items-center mb-6">
             <Image
               src={"/logo.png"}
@@ -115,9 +104,9 @@ export default function LoginPage() {
                          hover:from-green-700 hover:to-green-500
                          focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
                          transition-all duration-200 ease-in-out"
-              disabled={loading}
+              disabled={signInMutation.isPending}
             >
-              {loading ? "Logging In..." : "Log In"}
+              {signInMutation.isPending ? "Logging In..." : "Log In"}
             </Button>
           </form>
           <p className="mt-6 text-center text-sm text-gray-600">

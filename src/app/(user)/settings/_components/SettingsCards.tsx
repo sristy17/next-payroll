@@ -9,7 +9,7 @@ import { SaveAll, Shield } from "lucide-react";
 import { supabase } from "@/helpers/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCroppedImg}  from "@/lib/utils";
-import Cropper from "react-easy-crop"
+import Cropper, { Area } from "react-easy-crop"
 
 export function SectionCard({
   title,
@@ -107,7 +107,7 @@ export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
 
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area|null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const queryClient = useQueryClient();
@@ -162,7 +162,7 @@ export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
     setZoom(1);
   }
 
-  const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
+  const onCropComplete = useCallback((_: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 

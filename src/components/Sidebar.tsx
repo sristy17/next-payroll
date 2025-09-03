@@ -3,15 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-<<<<<<< HEAD
 import { signOut } from "@/app/api/auth/provider";
-import { useSessionQuery } from "@/app/api/auth/query";
-=======
-import { signOut, getUser } from "@/app/api/auth/auth";
-import { User } from "@/app/api/auth/types";
-import { useQuery } from "@tanstack/react-query"; // ✅ import tanstack query
->>>>>>> 9623b66 (Added profile photo upload and removal functionality in the settings page)
-
+import { useUserQuery } from "@/app/api/auth/query";
 import {
   LayoutDashboard,
   Wallet,
@@ -23,24 +16,13 @@ import {
 import { Button } from "./ui/button";
 
 export default function Sidebar() {
-  const { data } = useSessionQuery();
-
+  //fetching cache
+  const { data }=useUserQuery();
+  
   const pathname = usePathname();
   const router = useRouter();
-  const isActive = (path: string) => pathname === path;
-<<<<<<< HEAD
-=======
 
-  // ✅ Fetch user with TanStack Query
-  const { data: user, isLoading } = useQuery<User | null>({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const { user, error } = await getUser();
-      if (error) return null;
-      return user;
-    },
-  });
->>>>>>> 9623b66 (Added profile photo upload and removal functionality in the settings page)
+  const isActive = (path: string) => pathname === path;
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -97,8 +79,8 @@ export default function Sidebar() {
         <div className="flex items-center space-x-3 p-3 w-full">
           <Image
             src={
-              user?.profile_pic
-                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_pictures/${user.profile_pic}?t=${Date.now()}`
+              data?.user?.profile_pic
+                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_pictures/${data?.user?.profile_pic}?t=${Date.now()}`
                 : "/user-avatar.png"
             }
             alt="User Avatar"
@@ -109,17 +91,10 @@ export default function Sidebar() {
           />
           <div className="min-w-0">
             <p className="text-white font-semibold text-sm md:text-base truncate">
-<<<<<<< HEAD
-              {data?.session?.name || "Guest"}
+              {data?.user?.name || "Guest"}
             </p>
             <p className="text-gray-400 text-xs md:text-sm truncate">
-              {data?.session?.email || "guest@example.com"}
-=======
-              {isLoading ? "Loading..." : user?.name || "Guest"}
-            </p>
-            <p className="text-gray-400 text-xs md:text-sm truncate">
-              {isLoading ? "Loading..." : user?.email || "guest@example.com"}
->>>>>>> 9623b66 (Added profile photo upload and removal functionality in the settings page)
+              {data?.user?.email || "guest@example.com"}
             </p>
           </div>
         </div>

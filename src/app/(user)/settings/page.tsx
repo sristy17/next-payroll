@@ -22,7 +22,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/app/api/auth/auth";
+import { getUser } from "@/app/api/auth/provider"
+import { useUserQuery } from "@/app/api/auth/query";
 
 type NotificationKey = "payroll" | "itr" | "gst";
 
@@ -50,14 +51,7 @@ const notificationItems: {
 
 export default function SettingsPage() {
   // ✅ fetch user globally with TanStack
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const { user, error } = await getUser();
-      if (error) return undefined;
-      return user;
-    },
-  });
+  const { data } = useUserQuery();
 
   const [userData, setUserData] = useState({
     fullName: "Anna Sharma",
@@ -107,13 +101,13 @@ export default function SettingsPage() {
     toast.success("Notification preferences saved!");
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center text-gray-600">
-        Loading...
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center text-gray-600">
+  //       Loading...
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -125,13 +119,13 @@ export default function SettingsPage() {
 
         <main className="flex-1 space-y-6">
           {/* Profile Photo */}
-          {user && (
+          {data && (
             <SectionCard
               title="Profile Photo"
               subtitle="Upload or change your avatar"
               icon={<User className="w-6 h-6" />}
             >
-              <ProfilePhotoForm user={user} />
+              <ProfilePhotoForm userData={data?.user} />
             </SectionCard>
           )}
 

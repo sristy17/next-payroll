@@ -19,10 +19,7 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.1",
     "@tanstack/react-query": "^5.85.5",
-<<<<<<< HEAD
     "@tanstack/react-query-devtools": "^5.85.5",
-=======
->>>>>>> 9623b66 (Added profile photo upload and removal functionality in the settings page)
     "@types/jsonwebtoken": "^9.0.9",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",

@@ -88,13 +88,13 @@ export function SaveButton({ onClick }: { onClick: () => void }) {
 
 // ----------------- Upload avatar ---------------------
 type ProfilePhotoFormProps = {
-  user: {
+  userData: {
     id: string;
     profile_pic?: string | null;  // allow both undefined and null
-  };
+  } | null;
 };
 
-export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
+export function ProfilePhotoForm({ userData }: ProfilePhotoFormProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -107,35 +107,46 @@ export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
 
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area|null>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const queryClient = useQueryClient();
 
   // Load existing avatar
-  useEffect(() => {
-    if (user.profile_pic) loadAvatar(user.profile_pic);
-    else {
+  const prevAvatarPath = useRef<string | null>(null);
+
+useEffect(() => {
+  let isMounted = true;
+
+  async function fetchAvatar() {
+    if (userData?.profile_pic && userData?.profile_pic !== prevAvatarPath.current) {
+      try {
+        const { data, error } = await supabase.storage
+          .from("profile_pictures")
+          .createSignedUrl(userData?.profile_pic, 60 * 60);
+        if (error) throw error;
+        if (isMounted) {
+          setAvatarUrl(data.signedUrl);
+          setAvatarPath(userData?.profile_pic);
+          prevAvatarPath.current = userData.profile_pic; // remember this avatar
+        }
+      } catch (err) {
+        console.error("Error loading avatar:", err);
+      }
+    } else if (!userData?.profile_pic) {
       setAvatarUrl(null);
       setAvatarPath(null);
-    }
-  }, [user.profile_pic]);
-
-  async function loadAvatar(path: string) {
-    try {
-      const { data, error } = await supabase.storage
-        .from("profile_pictures")
-        .createSignedUrl(path, 60 * 60);
-      if (error) throw error;
-
-      setAvatarUrl(data.signedUrl);
-      setAvatarPath(path);
-    } catch (err) {
-      console.error("Error loading avatar:", err);
+      prevAvatarPath.current = null;
     }
   }
 
-  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+  fetchAvatar();
+
+  return () => { isMounted = false; };
+}, [userData?.profile_pic]);
+
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -157,16 +168,15 @@ export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
     setSelectedFile(file);
     setImageUrl(url);
     setShowCropModal(true);
-
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-  }
+  };
 
   const onCropComplete = useCallback((_: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  async function handleConfirmCrop() {
+  const handleConfirmCrop = async () => {
     if (!imageUrl || !croppedAreaPixels) return;
 
     try {
@@ -175,20 +185,27 @@ export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
       const croppedBlob = await getCroppedImg(imageUrl, croppedAreaPixels);
 
       const fileExt = selectedFile?.name.split(".").pop() || "png";
-      const fileName = `${user.id}.${fileExt}`;
+      const fileName = `${userData?.id}-${Date.now()}.${fileExt}`;
       const croppedFile = new File([croppedBlob], fileName, { type: croppedBlob.type });
+
+      // Upload to storage
+      // console.log("Updating user:", userData?.id, "with file:", fileName);
 
       const { error: uploadError } = await supabase.storage
         .from("profile_pictures")
         .upload(fileName, croppedFile, { upsert: true });
       if (uploadError) throw uploadError;
 
+      // Update user profile in DB
+      console.log("Updating user:", userData?.id, "with file:", fileName);
+
       const { error: dbError } = await supabase
         .from("users")
         .update({ profile_pic: fileName })
-        .eq("id", user.id);
+        .eq("id", userData?.id);
       if (dbError) throw dbError;
 
+      // Get signed URL immediately and update state
       const { data, error } = await supabase.storage
         .from("profile_pictures")
         .createSignedUrl(fileName, 60 * 60);
@@ -196,23 +213,22 @@ export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
 
       setAvatarUrl(data.signedUrl);
       setAvatarPath(fileName);
-
-      toast.success("Profile photo updated!");
-      await queryClient.invalidateQueries({ queryKey: ["user"] });
-
-      setShowCropModal(false);
       setSelectedFile(null);
       if (imageUrl) URL.revokeObjectURL(imageUrl);
       setImageUrl(null);
+      setShowCropModal(false);
+
+      toast.success("Profile photo updated!");
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     } catch (err) {
       console.error("Upload error:", err);
       toast.error("Failed to upload photo.");
     } finally {
       setUploading(false);
     }
-  }
+  };
 
-  async function handleRemove() {
+  const handleRemove = async () => {
     if (!avatarPath) return;
 
     try {
@@ -225,23 +241,24 @@ export function ProfilePhotoForm({ user }: ProfilePhotoFormProps) {
       const { error: dbError } = await supabase
         .from("users")
         .update({ profile_pic: null })
-        .eq("id", user.id);
+        .eq("id", userData?.id);
       if (dbError) throw dbError;
 
       setAvatarUrl(null);
       setAvatarPath(null);
       setSelectedFile(null);
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
       setImageUrl(null);
 
       toast.success("Profile photo removed!");
-      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     } catch (err) {
       console.error("Remove error:", err);
       toast.error("Failed to remove photo.");
     } finally {
       setRemoving(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center space-y-4">

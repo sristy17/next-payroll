@@ -5,9 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { User } from "../app/api/auth/types"
-import { getUser } from "../app/api/auth/auth"
+import { useUserQuery } from "@/app/api/auth/query";
 interface NavbarProps {
   title: string;
   description?: string;
@@ -15,15 +13,8 @@ interface NavbarProps {
 
 export default function Navbar({ title, description }: Readonly<NavbarProps>) {
 
-   // ✅ Fetch user with TanStack Query
-  const { data: user, isLoading } = useQuery<User | null>({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const { user, error } = await getUser();
-      if (error) return null;
-      return user;
-    },
-  });
+   // Fetch user with TanStack Query
+  const { data } =useUserQuery(); 
 
   const router = useRouter();
   return (
@@ -66,8 +57,8 @@ export default function Navbar({ title, description }: Readonly<NavbarProps>) {
           <div className="flex items-center justify-center h-11 w-11">
             <Image
               src={
-              user?.profile_pic
-                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_pictures/${user.profile_pic}?t=${Date.now()}`
+              data?.user?.profile_pic
+                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_pictures/${data?.user?.profile_pic}?t=${Date.now()}`
                 : "/user-avatar.png"
             }
               alt="User Avatar"

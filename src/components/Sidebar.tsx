@@ -4,7 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "@/app/api/auth/provider";
-import { useUserQuery } from "@/app/api/auth/query";
+import { useSessionQuery } from "@/app/api/auth/query";
+
 import {
   LayoutDashboard,
   Wallet,
@@ -16,12 +17,10 @@ import {
 import { Button } from "./ui/button";
 
 export default function Sidebar() {
-  //fetching cache
-  const { data }=useUserQuery();
-  
+  const { data } = useSessionQuery();
+
   const pathname = usePathname();
   const router = useRouter();
-
   const isActive = (path: string) => pathname === path;
 
   const navItems = [
@@ -78,23 +77,18 @@ export default function Sidebar() {
       <div className="mt-auto pt-6 border-t border-green-800 w-full">
         <div className="flex items-center space-x-3 p-3 w-full">
           <Image
-            src={
-              data?.user?.profile_pic
-                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_pictures/${data?.user?.profile_pic}?t=${Date.now()}`
-                : "/user-avatar.png"
-            }
+            src="/user-avatar.png"
             alt="User Avatar"
             width={48}
             height={48}
             className="rounded-full border-2 border-white flex-shrink-0"
-            unoptimized
           />
           <div className="min-w-0">
             <p className="text-white font-semibold text-sm md:text-base truncate">
-              {data?.user?.name || "Guest"}
+              {data?.session?.name || "Guest"}
             </p>
             <p className="text-gray-400 text-xs md:text-sm truncate">
-              {data?.user?.email || "guest@example.com"}
+              {data?.session?.email || "guest@example.com"}
             </p>
           </div>
         </div>

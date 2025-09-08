@@ -7,17 +7,16 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSignInMutation } from "@/app/api/auth/query";
-
+import { Label } from "@/components/ui/label";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const signInMutation = useSignInMutation();
 
-  /**
-   * Handles the user login process using React Query mutation.
-   */
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -54,12 +53,12 @@ export default function LoginPage() {
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label
+              <Label
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Email
-              </label>
+              </Label>
               <Input
                 type="email"
                 id="email"
@@ -73,12 +72,12 @@ export default function LoginPage() {
             </div>
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label
+                <Label
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Password
-                </label>
+                </Label>
                 <Link
                   href="/forgotpassword"
                   className="text-sm font-medium text-blue-600 hover:underline"
@@ -86,16 +85,28 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="border-gray-300 focus:border-green-500 focus:ring-green-500"
-              />
+                 <div className="relative">
+                   <Input
+                     type={showPassword ? "text" : "password"}
+                     id="password"
+                     name="password"
+                     required
+                     value={password}
+                     onChange={(e) => setPassword(e.target.value)}
+                     placeholder="Enter your password"
+                   />
+                   {showPassword ? (
+                     <FaRegEye
+                       onClick={() => setShowPassword(false)}
+                       className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+                     />
+                   ) : (
+                     <FaRegEyeSlash
+                       onClick={() => setShowPassword(true)}
+                       className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+                     />
+                   )}
+                 </div>
             </div>
             <Button
               type="submit"

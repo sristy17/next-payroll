@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { toast } from "react-hot-toast";
 import { SaveAll, Shield } from "lucide-react";
 import { supabase } from "@/helpers/supabase";
-import { useQueryClient } from "@tanstack/react-query";
 import { useUploadPhotoMutation,useRemovePhotoMutation } from "@/app/api/auth/query";
 import { getCroppedImg}  from "@/lib/utils";
 import Cropper, { Area } from "react-easy-crop"

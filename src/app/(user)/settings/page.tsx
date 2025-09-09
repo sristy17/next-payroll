@@ -21,8 +21,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
-import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/app/api/auth/provider"
 import { useUserQuery } from "@/app/api/auth/query";
 
 type NotificationKey = "payroll" | "itr" | "gst";

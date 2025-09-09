@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { SaveAll, Shield } from "lucide-react";
 import { supabase } from "@/helpers/supabase";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUploadPhotoMutation,useRemovePhotoMutation } from "@/app/api/auth/query";
 import { getCroppedImg}  from "@/lib/utils";
 import Cropper, { Area } from "react-easy-crop"
 
@@ -97,8 +98,6 @@ type ProfilePhotoFormProps = {
 export function ProfilePhotoForm({ userData }: ProfilePhotoFormProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [removing, setRemoving] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -110,55 +109,45 @@ export function ProfilePhotoForm({ userData }: ProfilePhotoFormProps) {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const queryClient = useQueryClient();
 
-  // Load existing avatar
-  const prevAvatarPath = useRef<string | null>(null);
+  const uploadMutation = useUploadPhotoMutation();
+  const removeMutation = useRemovePhotoMutation();
 
-useEffect(() => {
-  let isMounted = true;
+  // Load existing avatar from Supabase
+  useEffect(() => {
+    let isMounted = true;
 
-  async function fetchAvatar() {
-    if (userData?.profile_pic && userData?.profile_pic !== prevAvatarPath.current) {
-      try {
+    async function fetchAvatar() {
+      if (userData?.profile_pic) {
         const { data, error } = await supabase.storage
           .from("profile_pictures")
-          .createSignedUrl(userData?.profile_pic, 60 * 60);
-        if (error) throw error;
-        if (isMounted) {
+          .createSignedUrl(userData.profile_pic, 60 * 60);
+        if (!error && isMounted) {
           setAvatarUrl(data.signedUrl);
-          setAvatarPath(userData?.profile_pic);
-          prevAvatarPath.current = userData.profile_pic; // remember this avatar
+          setAvatarPath(userData.profile_pic);
         }
-      } catch (err) {
-        console.error("Error loading avatar:", err);
+      } else {
+        setAvatarUrl(null);
+        setAvatarPath(null);
       }
-    } else if (!userData?.profile_pic) {
-      setAvatarUrl(null);
-      setAvatarPath(null);
-      prevAvatarPath.current = null;
     }
-  }
 
-  fetchAvatar();
-
-  return () => { isMounted = false; };
-}, [userData?.profile_pic]);
-
+    fetchAvatar();
+    return () => {
+      isMounted = false;
+    };
+  }, [userData?.profile_pic]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
-    const maxSizeMB = 1;
-
-    if (!validTypes.includes(file.type)) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
       toast.error("Invalid file type.");
       return;
     }
-    if (file.size / 1024 / 1024 > maxSizeMB) {
-      toast.error(`File too large. Max size is ${maxSizeMB} MB.`);
+    if (file.size / 1024 / 1024 > 1) {
+      toast.error("File too large. Max 1 MB.");
       return;
     }
 
@@ -177,92 +166,36 @@ useEffect(() => {
   }, []);
 
   const handleConfirmCrop = async () => {
-    if (!imageUrl || !croppedAreaPixels) return;
+    if (!imageUrl || !croppedAreaPixels || !selectedFile || !userData?.id) return;
 
     try {
-      setUploading(true);
-
       const croppedBlob = await getCroppedImg(imageUrl, croppedAreaPixels);
+      const croppedFile = new File(
+        [croppedBlob],
+        `${userData.id}-${Date.now()}.${selectedFile.name.split(".").pop()}`,
+        { type: croppedBlob.type }
+      );
 
-      const fileExt = selectedFile?.name.split(".").pop() || "png";
-      const fileName = `${userData?.id}-${Date.now()}.${fileExt}`;
-      const croppedFile = new File([croppedBlob], fileName, { type: croppedBlob.type });
+      uploadMutation.mutate({ userId: userData.id, file: croppedFile });
 
-      // Upload to storage
-      // console.log("Updating user:", userData?.id, "with file:", fileName);
-
-      const { error: uploadError } = await supabase.storage
-        .from("profile_pictures")
-        .upload(fileName, croppedFile, { upsert: true });
-      if (uploadError) throw uploadError;
-
-      // Update user profile in DB
-      console.log("Updating user:", userData?.id, "with file:", fileName);
-
-      const { error: dbError } = await supabase
-        .from("users")
-        .update({ profile_pic: fileName })
-        .eq("id", userData?.id);
-      if (dbError) throw dbError;
-
-      // Get signed URL immediately and update state
-      const { data, error } = await supabase.storage
-        .from("profile_pictures")
-        .createSignedUrl(fileName, 60 * 60);
-      if (error) throw error;
-
-      setAvatarUrl(data.signedUrl);
-      setAvatarPath(fileName);
       setSelectedFile(null);
       if (imageUrl) URL.revokeObjectURL(imageUrl);
       setImageUrl(null);
       setShowCropModal(false);
-
-      toast.success("Profile photo updated!");
-      queryClient.invalidateQueries({ queryKey: ["user"] });
     } catch (err) {
-      console.error("Upload error:", err);
-      toast.error("Failed to upload photo.");
-    } finally {
-      setUploading(false);
+      console.error(err);
+      toast.error("Failed to crop image.");
     }
   };
 
-  const handleRemove = async () => {
-    if (!avatarPath) return;
-
-    try {
-      setRemoving(true);
-      const { error: removeError } = await supabase.storage
-        .from("profile_pictures")
-        .remove([avatarPath]);
-      if (removeError) throw removeError;
-
-      const { error: dbError } = await supabase
-        .from("users")
-        .update({ profile_pic: null })
-        .eq("id", userData?.id);
-      if (dbError) throw dbError;
-
-      setAvatarUrl(null);
-      setAvatarPath(null);
-      setSelectedFile(null);
-      if (imageUrl) URL.revokeObjectURL(imageUrl);
-      setImageUrl(null);
-
-      toast.success("Profile photo removed!");
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    } catch (err) {
-      console.error("Remove error:", err);
-      toast.error("Failed to remove photo.");
-    } finally {
-      setRemoving(false);
+  const handleRemove = () => {
+    if (userData?.id && avatarPath) {
+      removeMutation.mutate({ userId: userData.id, avatarPath });
     }
   };
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      {/* Hidden file input */}
       <input
         type="file"
         accept="image/*"
@@ -271,7 +204,6 @@ useEffect(() => {
         onChange={handleFileSelect}
       />
 
-      {/* Avatar display */}
       <div
         onClick={() => {
           if (avatarUrl) setShowPreviewModal(true);
@@ -286,24 +218,23 @@ useEffect(() => {
         )}
       </div>
 
-      {/* Buttons */}
       <div className="flex gap-4">
         <Button
           type="button"
-          disabled={uploading}
+          disabled={uploadMutation.isPending}
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-2 bg-gradient-to-br from-green-500 to-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300 disabled:opacity-60"
+          className="bg-green-600 text-white"
         >
-          {uploading ? "Uploading..." : "Upload Photo"}
+          {uploadMutation.isPending ? "Uploading..." : "Upload Photo"}
         </Button>
 
         <Button
           type="button"
-          disabled={removing || !avatarUrl}
+          disabled={removeMutation.isPending || !avatarUrl}
           onClick={handleRemove}
-          className="flex items-center gap-2 bg-gradient-to-br from-red-500 to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300 disabled:opacity-60"
+          className="bg-red-500 text-white"
         >
-          {removing ? "Removing..." : "Remove Photo"}
+          {removeMutation.isPending ? "Removing..." : "Remove Photo"}
         </Button>
       </div>
 
@@ -311,22 +242,18 @@ useEffect(() => {
       {showCropModal && imageUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-4 rounded-lg w-96 h-96 relative flex flex-col items-center justify-center">
-            <div className="relative w-full h-full bg-gray-200">
-              <Cropper
-                image={imageUrl}
-                crop={crop}
-                zoom={zoom}
-                aspect={1}
-                cropShape="round"
-                showGrid={true}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-                restrictPosition={false}
-              />
-            </div>
-
-            {/* Zoom slider */}
+            <Cropper
+              image={imageUrl}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              cropShape="round"
+              showGrid={true}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+              restrictPosition={false}
+            />
             <input
               type="range"
               min={1}
@@ -336,16 +263,10 @@ useEffect(() => {
               onChange={(e) => setZoom(Number(e.target.value))}
               className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-3/4"
             />
-
-            <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 flex gap-4">
-              <Button
-                onClick={handleConfirmCrop}
-                className="bg-green-600 text-white px-4 py-2 rounded justify-center"
-                disabled={uploading}
-              >
-                {uploading ? "Uploading..." : "✔ Confirm"}
+            <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex gap-4">
+              <Button onClick={handleConfirmCrop} disabled={uploadMutation.isPending} className="bg-green-600 text-white">
+                {uploadMutation.isPending ? "Uploading..." : "Confirm"}
               </Button>
-
               <Button
                 onClick={() => {
                   setShowCropModal(false);
@@ -353,8 +274,7 @@ useEffect(() => {
                   if (imageUrl) URL.revokeObjectURL(imageUrl);
                   setImageUrl(null);
                 }}
-                className="bg-red-500 text-white px-4 py-2 rounded justify-center"
-                disabled={uploading}
+                className="bg-red-500 text-white"
               >
                 Cancel
               </Button>

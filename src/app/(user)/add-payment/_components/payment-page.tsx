@@ -53,16 +53,18 @@ export default function PaymentPage({
   const onSubmit = (data: PaymentFormData) => {
     handleSubmit(data);
   };
+
   return (
-    <div className="flex flex-col gap-y-4 mt-8 h-full">
-      <h2 className="font-bold md:text-xl">Add Payment</h2>
-      <div className="bg-gradient-to-br from-green-900 md:h-3/4 to-black rounded-xl p-4 md:p-8">
+    <div className="flex flex-col flex-1 h-full ">
+
+      {/* Form Card */}
+      <div className="bg-gradient-to-br from-green-900 to-black rounded-xl md:p-8 flex-1 flex">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col justify-between h-full"
+            className="flex flex-col justify-between h-full w-full"
           >
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 flex-1">
               {/* Expense Name */}
               <FormField
                 control={form.control}
@@ -131,7 +133,12 @@ export default function PaymentPage({
                 )}
               />
             </div>
-            <Button type="submit" className="bg-green-600 hover:bg-green-700">
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              className="bg-green-600 hover:bg-green-700 mt-6"
+            >
               <Plus />
               Add Payment
             </Button>

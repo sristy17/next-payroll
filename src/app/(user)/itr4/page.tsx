@@ -1,48 +1,28 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { getSession } from "../../api/auth/auth";
-import GenerateButton from "@/components/GenerateButton";
+import { useState } from "react";
+import ITR4Request from "@/app/(user)/itr4/_components/ITR4Request";
 import Navbar from "@/components/Navbar";
 
 export default function Itr4() {
-  const [username, setUsername] = useState<string | undefined>(undefined);
   const [showPending, setShowPending] = useState(false);
-
-  useEffect(() => {
-    async function fetchSession() {
-      const { session, error } = await getSession();
-      if (session && error === null) {
-        setUsername(session.name);
-      }
-    }
-    fetchSession();
-  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="flex-1 flex flex-col pl-10 pr-8 pt-8">
+      <div className="flex-1 flex flex-col p-4">
         <Navbar
           title="ITR - 4 (Sugam)"
           description="Simplified income tax return form for individuals and small businesses."
         />
-        <main className="flex-1 pb-2 pt-0 max-w-none">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {username ? `Hello, ${username}!` : "Hello!"}
-            </h1>
-            <p className="text-gray-800 text-sm">
-              Send and receive funds with pleasure.
-            </p>
-            {showPending ? (
-              <div className="w-full max-w-full">
-                <GenerateButton />
-              </div>
-            ) : (
+
+        <main className="flex-1 flex flex-col">
+          {showPending ? (
+            <div className="flex-1">
+              <ITR4Request />
+            </div>
+          ) : (
+            <div className="flex flex-col flex-1 justify-between">
               <div className="flex flex-col gap-5">
-                <h2 className="text-base font-semibold text-gray-900 mt-5">
-                  Generate ITR -4 (Sugam)
-                </h2>
                 <p className="text-gray-800 text-sm">
                   ITR-4 (Sugam) is a simplified income tax return form for
                   individuals, Hindu Undivided Families (HUFs), and small
@@ -51,6 +31,7 @@ export default function Itr4() {
                   straightforward income sources, such as small business profits
                   or profession-related income.
                 </p>
+
                 <div className="flex items-center mt-5">
                   <span className="text-xl mr-2">✅</span>
                   <span className="font-semibold text-base text-gray-900">
@@ -71,6 +52,7 @@ export default function Itr4() {
                   those with gross receipts under Rs. 50 lakh (for
                   professionals).
                 </p>
+
                 <p className="text-gray-800 text-sm">
                   Next PAY simplifies the ITR-4 filing process by offering an
                   AI-powered platform that auto-fills your income tax return
@@ -85,6 +67,7 @@ export default function Itr4() {
                   government regulations while making the process fast and
                   hassle-free.
                 </p>
+
                 <p className="text-gray-800 mt-5 text-sm font-semibold">
                   By using Next PAY to generate and file your ITR-4 (Sugam), you
                   agree to the following terms and conditions:
@@ -114,17 +97,18 @@ export default function Itr4() {
                     required for generating the ITR.
                   </li>
                 </ul>
-                <Button
-                  variant="default"
-                  size="lg"
-                  className="w-full rounded-xl font-semibold text-white text-base shadow-md mt-8 h-11 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900"
-                  onClick={() => setShowPending(true)}
-                >
-                  + Generate
-                </Button>
               </div>
-            )}
-          </div>
+
+              <Button
+                variant="default"
+                size="lg"
+                className="w-full rounded-xl font-semibold text-white text-base shadow-md mt-8 mb-5 h-11 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900"
+                onClick={() => setShowPending(true)}
+              >
+                + Generate
+              </Button>
+            </div>
+          )}
         </main>
       </div>
     </div>

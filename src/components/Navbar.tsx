@@ -14,14 +14,14 @@ interface NavbarProps {
 export default function Navbar({ title, description }: Readonly<NavbarProps>) {
   const router = useRouter();
   return (
-    <header className="w-full mb-8">
+    <header className="w-full mb-5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900">
             {title}
           </h1>
           {description && (
-            <p className="text-gray-600 text-sm md:text-base">{description}</p>
+            <p className="text-gray-600 text-base">{description}</p>
           )}
         </div>
         <div className="flex items-center gap-3 md:gap-4">

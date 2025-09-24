@@ -232,7 +232,7 @@ export default function ProfilePage() {
                         <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">User not found</h2>
                         <p className="text-gray-600 mb-6">We couldn't find your profile. Please log in again.</p>
-                        <Button 
+                        <Button
                             onClick={() => router.push("/auth/login")}
                             className="w-full bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-200"
                         >
@@ -285,252 +285,251 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                {/* Profile Content */}
-                <div className="p-6 sm:p-8">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 space-y-4 sm:space-y-0">
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
-                            <p className="text-gray-600 mt-1">Manage your personal information and account settings</p>
-                        </div>
-                        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                            {!isEditing ? (
-                                <>
-                                    <Button
-                                        onClick={() => setIsEditing(true)}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
-                                    >
-                                        <Edit3 className="w-4 h-4 mr-2" />
-                                        Edit Profile
-                                    </Button>
-                                    <Button
-                                        onClick={() => setShowDeleteConfirm(true)}
-                                        variant="destructive"
-                                        className="shadow-md hover:shadow-lg transition-all duration-200"
-                                    >
-                                        <Trash2 className="w-4 h-4 mr-2" />
-                                        Delete Profile
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Button
-                                        onClick={handleUpdateProfile}
-                                        disabled={updateLoading}
-                                        className="bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
-                                    >
-                                        <Save className="w-4 h-4 mr-2" />
-                                        {updateLoading ? "Saving..." : "Save Changes"}
-                                    </Button>
-                                    <Button
-                                        onClick={() => {
-                                            setIsEditing(false);
-                                            setFormData({
-                                                name: user.name || "",
-                                                email: user.email || "",
-                                            });
-                                            setProfilePicFile(null);
-                                            setProfilePicPreview(null);
-                                        }}
-                                        variant="outline"
-                                        className="shadow-md hover:shadow-lg transition-all duration-200"
-                                    >
-                                        <X className="w-4 h-4 mr-2" />
-                                        Cancel
-                                    </Button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Profile Form */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div className="space-y-6">
-                            <div className="bg-gray-50 rounded-lg p-6">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
-                                <div className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="name" className="text-sm font-medium text-gray-700">Full Name</Label>
-                                        <Input
-                                            id="name"
-                                            type="text"
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            disabled={!isEditing}
-                                            className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-                                            placeholder="Enter your full name"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            value={formData.email}
-                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            disabled={!isEditing}
-                                            className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-                                            placeholder="Enter your email address"
-                                        />
-                                    </div>
-                                </div>
+                    {/* Profile Content */}
+                    <div className="p-6 sm:p-8">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 space-y-4 sm:space-y-0">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
+                                <p className="text-gray-600 mt-1">Manage your personal information and account settings</p>
                             </div>
-
-                            {/* Password change section - separate from profile editing */}
-                            {!isEditing && (
-                                <div className="bg-gray-50 rounded-lg p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900">Security</h3>
-                                            <p className="text-sm text-gray-600 mt-1">Manage your password and security settings</p>
-                                        </div>
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                                {!isEditing ? (
+                                    <>
                                         <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setShowPasswordForm(!showPasswordForm)}
-                                            className="shadow-md hover:shadow-lg transition-all duration-200"
+                                            onClick={() => setIsEditing(true)}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
                                         >
                                             <Edit3 className="w-4 h-4 mr-2" />
-                                            Change Password
+                                            Edit Profile
                                         </Button>
-                                    </div>
-
-                                    {showPasswordForm && (
-                                        <div className="space-y-4 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-                                            <div>
-                                                <Label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">Current Password</Label>
-                                                <Input
-                                                    id="currentPassword"
-                                                    type="password"
-                                                    value={passwordData.currentPassword}
-                                                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                                                    placeholder="Enter current password"
-                                                    className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700">New Password</Label>
-                                                <div className="relative mt-2">
-                                                    <Input
-                                                        id="newPassword"
-                                                        type={showPassword ? "text" : "password"}
-                                                        value={passwordData.newPassword}
-                                                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                                        placeholder="Enter new password (min. 6 characters)"
-                                                        className="pr-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-600 transition-colors duration-200"
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                    >
-                                                        {showPassword ? (
-                                                            <EyeOff className="h-4 w-4 text-gray-400" />
-                                                        ) : (
-                                                            <Eye className="h-4 w-4 text-gray-400" />
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                <Label htmlFor="confirmNewPassword" className="text-sm font-medium text-gray-700">Confirm New Password</Label>
-                                                <Input
-                                                    id="confirmNewPassword"
-                                                    type={showPassword ? "text" : "password"}
-                                                    value={passwordData.confirmNewPassword}
-                                                    onChange={(e) => setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })}
-                                                    placeholder="Confirm new password"
-                                                    className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
-                                                <Button
-                                                    type="button"
-                                                    onClick={handlePasswordChange}
-                                                    disabled={updateLoading}
-                                                    className="flex-1 bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
-                                                >
-                                                    <Save className="w-4 h-4 mr-2" />
-                                                    {updateLoading ? "Updating..." : "Update Password"}
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    onClick={() => {
-                                                        setShowPasswordForm(false);
-                                                        setPasswordData({
-                                                            currentPassword: "",
-                                                            newPassword: "",
-                                                            confirmNewPassword: "",
-                                                        });
-                                                    }}
-                                                    className="shadow-md hover:shadow-lg transition-all duration-200"
-                                                >
-                                                    <X className="w-4 h-4 mr-2" />
-                                                    Cancel
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                        <Button
+                                            onClick={() => setShowDeleteConfirm(true)}
+                                            variant="destructive"
+                                            className="shadow-md hover:shadow-lg transition-all duration-200"
+                                        >
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                            Delete Profile
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            onClick={handleUpdateProfile}
+                                            disabled={updateLoading}
+                                            className="bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
+                                        >
+                                            <Save className="w-4 h-4 mr-2" />
+                                            {updateLoading ? "Saving..." : "Save Changes"}
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                setIsEditing(false);
+                                                setFormData({
+                                                    name: user.name || "",
+                                                    email: user.email || "",
+                                                });
+                                                setProfilePicFile(null);
+                                                setProfilePicPreview(null);
+                                            }}
+                                            variant="outline"
+                                            className="shadow-md hover:shadow-lg transition-all duration-200"
+                                        >
+                                            <X className="w-4 h-4 mr-2" />
+                                            Cancel
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="space-y-6">
-                            <div className="bg-gray-50 rounded-lg p-6">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                        {/* Profile Form */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div className="space-y-6">
+                                <div className="bg-gray-50 rounded-lg p-6">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+                                    <div className="space-y-4">
                                         <div>
-                                            <Label className="text-sm font-medium text-gray-700">Account Type</Label>
-                                            <p className="text-sm text-gray-600 mt-1">Your account permissions level</p>
+                                            <Label htmlFor="name" className="text-sm font-medium text-gray-700">Full Name</Label>
+                                            <Input
+                                                id="name"
+                                                type="text"
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                disabled={!isEditing}
+                                                className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                                                placeholder="Enter your full name"
+                                            />
                                         </div>
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                            user.is_admin 
-                                                ? 'bg-purple-100 text-purple-800' 
-                                                : 'bg-green-100 text-green-800'
-                                        }`}>
-                                            {user.is_admin ? "Administrator" : "Regular User"}
-                                        </span>
-                                    </div>
 
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
                                         <div>
-                                            <Label className="text-sm font-medium text-gray-700">Account Created</Label>
-                                            <p className="text-sm text-gray-600 mt-1">When you joined our platform</p>
+                                            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                value={formData.email}
+                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                disabled={!isEditing}
+                                                className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                                                placeholder="Enter your email address"
+                                            />
                                         </div>
-                                        <span className="text-sm font-medium text-gray-900">
-                                            {new Date(user.created_at).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric',
-                                            })}
-                                        </span>
                                     </div>
+                                </div>
 
-                                    <div className="flex items-center justify-between py-3">
-                                        <div>
-                                            <Label className="text-sm font-medium text-gray-700">Last Updated</Label>
-                                            <p className="text-sm text-gray-600 mt-1">Most recent profile changes</p>
+                                {/* Password change section - separate from profile editing */}
+                                {!isEditing && (
+                                    <div className="bg-gray-50 rounded-lg p-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-gray-900">Security</h3>
+                                                <p className="text-sm text-gray-600 mt-1">Manage your password and security settings</p>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setShowPasswordForm(!showPasswordForm)}
+                                                className="shadow-md hover:shadow-lg transition-all duration-200"
+                                            >
+                                                <Edit3 className="w-4 h-4 mr-2" />
+                                                Change Password
+                                            </Button>
                                         </div>
-                                        <span className="text-sm font-medium text-gray-900">
-                                            {new Date(user.updated_at).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric',
-                                            })}
-                                        </span>
+
+                                        {showPasswordForm && (
+                                            <div className="space-y-4 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                                                <div>
+                                                    <Label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">Current Password</Label>
+                                                    <Input
+                                                        id="currentPassword"
+                                                        type="password"
+                                                        value={passwordData.currentPassword}
+                                                        onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                                                        placeholder="Enter current password"
+                                                        className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700">New Password</Label>
+                                                    <div className="relative mt-2">
+                                                        <Input
+                                                            id="newPassword"
+                                                            type={showPassword ? "text" : "password"}
+                                                            value={passwordData.newPassword}
+                                                            onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                                            placeholder="Enter new password (min. 6 characters)"
+                                                            className="pr-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-600 transition-colors duration-200"
+                                                            onClick={() => setShowPassword(!showPassword)}
+                                                        >
+                                                            {showPassword ? (
+                                                                <EyeOff className="h-4 w-4 text-gray-400" />
+                                                            ) : (
+                                                                <Eye className="h-4 w-4 text-gray-400" />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <Label htmlFor="confirmNewPassword" className="text-sm font-medium text-gray-700">Confirm New Password</Label>
+                                                    <Input
+                                                        id="confirmNewPassword"
+                                                        type={showPassword ? "text" : "password"}
+                                                        value={passwordData.confirmNewPassword}
+                                                        onChange={(e) => setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })}
+                                                        placeholder="Confirm new password"
+                                                        className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                                                    />
+                                                </div>
+
+                                                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+                                                    <Button
+                                                        type="button"
+                                                        onClick={handlePasswordChange}
+                                                        disabled={updateLoading}
+                                                        className="flex-1 bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
+                                                    >
+                                                        <Save className="w-4 h-4 mr-2" />
+                                                        {updateLoading ? "Updating..." : "Update Password"}
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        onClick={() => {
+                                                            setShowPasswordForm(false);
+                                                            setPasswordData({
+                                                                currentPassword: "",
+                                                                newPassword: "",
+                                                                confirmNewPassword: "",
+                                                            });
+                                                        }}
+                                                        className="shadow-md hover:shadow-lg transition-all duration-200"
+                                                    >
+                                                        <X className="w-4 h-4 mr-2" />
+                                                        Cancel
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="bg-gray-50 rounded-lg p-6">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                                            <div>
+                                                <Label className="text-sm font-medium text-gray-700">Account Type</Label>
+                                                <p className="text-sm text-gray-600 mt-1">Your account permissions level</p>
+                                            </div>
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.is_admin
+                                                    ? 'bg-purple-100 text-purple-800'
+                                                    : 'bg-green-100 text-green-800'
+                                                }`}>
+                                                {user.is_admin ? "Administrator" : "Regular User"}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                                            <div>
+                                                <Label className="text-sm font-medium text-gray-700">Account Created</Label>
+                                                <p className="text-sm text-gray-600 mt-1">When you joined our platform</p>
+                                            </div>
+                                            <span className="text-sm font-medium text-gray-900">
+                                                {new Date(user.created_at).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                })}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between py-3">
+                                            <div>
+                                                <Label className="text-sm font-medium text-gray-700">Last Updated</Label>
+                                                <p className="text-sm text-gray-600 mt-1">Most recent profile changes</p>
+                                            </div>
+                                            <span className="text-sm font-medium text-gray-900">
+                                                {new Date(user.updated_at).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                })}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
                 {/* Delete Confirmation Modal */}
                 {showDeleteConfirm && (

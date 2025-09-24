@@ -79,10 +79,9 @@ export default function Sidebar() {
             key={item.href}
             href={item.href}
             className={`flex items-center gap-3 p-3 rounded-lg font-medium transition-colors duration-200 w-full
-              ${
-                isActive(item.href)
-                  ? "bg-white text-green-900"
-                  : "text-white hover:bg-green-800/50"
+              ${isActive(item.href)
+                ? "bg-white text-green-900"
+                : "text-white hover:bg-green-800/50"
               }
               text-sm md:text-base truncate
             `}
@@ -94,7 +93,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto pt-6 border-t border-green-800 w-full">
-        <div 
+        <div
           className="flex items-center space-x-3 p-3 w-full cursor-pointer hover:bg-green-800/30 rounded-lg transition-colors duration-200"
           onClick={() => router.push("/profile")}
         >

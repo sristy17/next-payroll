@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import { User, UpdateProfileRequest, UpdateProfileResponse, DeleteProfileResponse } from "@/app/api/auth/types";
+import { getUser, getSession, signOut } from "@/app/api/auth/provider";
 
 export class ProfileService {
   /**
@@ -7,23 +8,14 @@ export class ProfileService {
    */
   static async getCurrentUserProfile(): Promise<User | null> {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const { user, error } = await getUser();
       
       if (error || !user) {
-        throw new Error("User not authenticated");
+        console.error("Error fetching user profile:", error);
+        return null;
       }
 
-      const { data: userProfile, error: profileError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (profileError) {
-        throw profileError;
-      }
-
-      return userProfile;
+      return user;
     } catch (error) {
       console.error("Error fetching user profile:", error);
       return null;
@@ -35,9 +27,9 @@ export class ProfileService {
    */
   static async updateProfile(updates: UpdateProfileRequest): Promise<UpdateProfileResponse> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const { session, error: sessionError } = await getSession();
       
-      if (authError || !user) {
+      if (sessionError || !session?.userId) {
         return { user: null, error: { message: "User not authenticated" } };
       }
 
@@ -49,7 +41,7 @@ export class ProfileService {
       const { data: updatedUser, error: updateError } = await supabase
         .from("users")
         .update(updateData)
-        .eq("id", user.id)
+        .eq("id", session.userId)
         .select()
         .single();
 
@@ -57,15 +49,9 @@ export class ProfileService {
         return { user: null, error: { message: updateError.message } };
       }
 
-      // Update auth email if changed
-      if (updates.email) {
-        const { error: authUpdateError } = await supabase.auth.updateUser({
-          email: updates.email,
-        });
-
-        if (authUpdateError) {
-          console.error("Error updating auth email:", authUpdateError);
-        }
+      // Update localStorage if email changed
+      if (updates.email && typeof window !== "undefined") {
+        localStorage.setItem("user_email", updates.email);
       }
 
       return { user: updatedUser, error: null };
@@ -80,12 +66,23 @@ export class ProfileService {
    */
   static async updatePassword(newPassword: string): Promise<{ error: string | null }> {
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
+      const { session, error: sessionError } = await getSession();
+      
+      if (sessionError || !session?.userId) {
+        return { error: "User not authenticated" };
+      }
 
-      if (error) {
-        return { error: error.message };
+      // Import bcrypt dynamically to avoid issues
+      const bcrypt = await import("bcryptjs");
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ password: hashedPassword, updated_at: new Date().toISOString() })
+        .eq("id", session.userId);
+
+      if (updateError) {
+        return { error: updateError.message };
       }
 
       return { error: null };
@@ -130,9 +127,9 @@ export class ProfileService {
    */
   static async deleteProfile(): Promise<DeleteProfileResponse> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const { session, error: sessionError } = await getSession();
       
-      if (authError || !user) {
+      if (sessionError || !session?.userId) {
         return { success: false, error: { message: "User not authenticated" } };
       }
 
@@ -140,14 +137,14 @@ export class ProfileService {
       const { error: deleteError } = await supabase
         .from("users")
         .delete()
-        .eq("id", user.id);
+        .eq("id", session.userId);
 
       if (deleteError) {
         return { success: false, error: { message: deleteError.message } };
       }
 
       // Sign out user
-      await supabase.auth.signOut();
+      await signOut();
 
       return { success: true, error: null };
     } catch (error) {

@@ -23,9 +23,17 @@ export default function ProfilePage() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        password: "",
-        confirmPassword: "",
     });
+    
+    // Password change states
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+    });
+    
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
     const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null);
     const [updateLoading, setUpdateLoading] = useState(false);
@@ -40,7 +48,7 @@ export default function ProfilePage() {
             if (typeof window !== "undefined") {
                 const userId = localStorage.getItem("user_id");
                 const userEmail = localStorage.getItem("user_email");
-                
+
                 if (!userId || !userEmail) {
                     router.push("/auth/login");
                     return;
@@ -58,8 +66,6 @@ export default function ProfilePage() {
             setFormData({
                 name: userProfile.name || "",
                 email: userProfile.email || "",
-                password: "",
-                confirmPassword: "",
             });
         } catch (error) {
             console.error("Error:", error);
@@ -100,10 +106,7 @@ export default function ProfilePage() {
             return;
         }
 
-        if (formData.password && formData.password !== formData.confirmPassword) {
-            alert("Passwords do not match");
-            return;
-        }
+        // Password validation is now handled separately in handlePasswordChange
 
         setUpdateLoading(true);
 
@@ -129,25 +132,60 @@ export default function ProfilePage() {
                 throw new Error(updateResponse.error.message);
             }
 
-            // Update password if provided
-            if (formData.password) {
-                const passwordResponse = await ProfileService.updatePassword(formData.password);
-                if (passwordResponse.error) {
-                    throw new Error(passwordResponse.error);
-                }
-            }
-
             // Refresh user data
             await fetchUserProfile();
             setIsEditing(false);
             setProfilePicFile(null);
             setProfilePicPreview(null);
-            setFormData({ ...formData, password: "", confirmPassword: "" });
 
             alert("Profile updated successfully!");
         } catch (error) {
             console.error("Error updating profile:", error);
             alert("Error updating profile. Please try again.");
+        } finally {
+            setUpdateLoading(false);
+        }
+    };
+
+    const handlePasswordChange = async () => {
+        if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmNewPassword) {
+            alert("Please fill in all password fields");
+            return;
+        }
+
+        if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+            alert("New passwords do not match");
+            return;
+        }
+
+        if (passwordData.newPassword.length < 6) {
+            alert("New password must be at least 6 characters long");
+            return;
+        }
+
+        setUpdateLoading(true);
+
+        try {
+            const passwordResponse = await ProfileService.updatePassword(
+                passwordData.currentPassword, 
+                passwordData.newPassword
+            );
+            
+            if (passwordResponse.error) {
+                throw new Error(passwordResponse.error);
+            }
+
+            setPasswordData({
+                currentPassword: "",
+                newPassword: "",
+                confirmNewPassword: "",
+            });
+            setShowPasswordForm(false);
+
+            alert("Password updated successfully!");
+        } catch (error) {
+            console.error("Error updating password:", error);
+            alert("Error updating password. Please check your current password and try again.");
         } finally {
             setUpdateLoading(false);
         }
@@ -269,8 +307,6 @@ export default function ProfilePage() {
                                             setFormData({
                                                 name: user.name || "",
                                                 email: user.email || "",
-                                                password: "",
-                                                confirmPassword: "",
                                             });
                                             setProfilePicFile(null);
                                             setProfilePicPreview(null);
@@ -312,44 +348,101 @@ export default function ProfilePage() {
                                 />
                             </div>
 
-                            {isEditing && (
-                                <>
-                                    <div>
-                                        <Label htmlFor="password">New Password (optional)</Label>
-                                        <div className="relative mt-1">
-                                            <Input
-                                                id="password"
-                                                type={showPassword ? "text" : "password"}
-                                                value={formData.password}
-                                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                                placeholder="Enter new password"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                            >
-                                                {showPassword ? (
-                                                    <EyeOff className="h-4 w-4 text-gray-400" />
-                                                ) : (
-                                                    <Eye className="h-4 w-4 text-gray-400" />
-                                                )}
-                                            </button>
-                                        </div>
+                            {/* Password change section - separate from profile editing */}
+                            {!isEditing && (
+                                <div className="pt-4 border-t">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-lg font-medium">Password</h3>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setShowPasswordForm(!showPasswordForm)}
+                                        >
+                                            <Edit3 className="w-4 h-4 mr-2" />
+                                            Change Password
+                                        </Button>
                                     </div>
 
-                                    <div>
-                                        <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                                        <Input
-                                            id="confirmPassword"
-                                            type={showPassword ? "text" : "password"}
-                                            value={formData.confirmPassword}
-                                            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                            placeholder="Confirm new password"
-                                            className="mt-1"
-                                        />
-                                    </div>
-                                </>
+                                    {showPasswordForm && (
+                                        <div className="space-y-4 p-4 border rounded-lg">
+                                            <div>
+                                                <Label htmlFor="currentPassword">Current Password</Label>
+                                                <Input
+                                                    id="currentPassword"
+                                                    type="password"
+                                                    value={passwordData.currentPassword}
+                                                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                                                    placeholder="Enter current password"
+                                                    className="mt-1"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <Label htmlFor="newPassword">New Password</Label>
+                                                <div className="relative mt-1">
+                                                    <Input
+                                                        id="newPassword"
+                                                        type={showPassword ? "text" : "password"}
+                                                        value={passwordData.newPassword}
+                                                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                                        placeholder="Enter new password"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                    >
+                                                        {showPassword ? (
+                                                            <EyeOff className="h-4 w-4 text-gray-400" />
+                                                        ) : (
+                                                            <Eye className="h-4 w-4 text-gray-400" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
+                                                <Input
+                                                    id="confirmNewPassword"
+                                                    type={showPassword ? "text" : "password"}
+                                                    value={passwordData.confirmNewPassword}
+                                                    onChange={(e) => setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })}
+                                                    placeholder="Confirm new password"
+                                                    className="mt-1"
+                                                />
+                                            </div>
+
+                                            <div className="flex space-x-2">
+                                                <Button
+                                                    type="button"
+                                                    onClick={handlePasswordChange}
+                                                    disabled={updateLoading}
+                                                    className="flex-1"
+                                                >
+                                                    <Save className="w-4 h-4 mr-2" />
+                                                    {updateLoading ? "Updating..." : "Update Password"}
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        setShowPasswordForm(false);
+                                                        setPasswordData({
+                                                            currentPassword: "",
+                                                            newPassword: "",
+                                                            confirmNewPassword: "",
+                                                        });
+                                                    }}
+                                                >
+                                                    <X className="w-4 h-4 mr-2" />
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
 

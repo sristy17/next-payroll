@@ -61,9 +61,9 @@ export class ProfileService {
   }
 
   /**
-   * Update user password
+   * Verify current password and update to new password
    */
-  static async updatePassword(newPassword: string): Promise<{ error: string | null }> {
+  static async updatePassword(currentPassword: string, newPassword: string): Promise<{ error: string | null }> {
     try {
       const { session, error: sessionError } = await getSession();
       
@@ -71,13 +71,34 @@ export class ProfileService {
         return { error: "User not authenticated" };
       }
 
+      // First, get the user's current hashed password from database
+      const { data: userData, error: fetchError } = await supabase
+        .from("users")
+        .select("password")
+        .eq("id", session.userId)
+        .single();
+
+      if (fetchError || !userData) {
+        return { error: "Could not verify current password" };
+      }
+
       // Import bcrypt dynamically to avoid issues
       const bcrypt = await import("bcryptjs");
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      
+      // Verify current password
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, userData.password);
+      
+      if (!isCurrentPasswordValid) {
+        return { error: "Current password is incorrect" };
+      }
 
+      // Hash the new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update with new password
       const { error: updateError } = await supabase
         .from("users")
-        .update({ password: hashedPassword, updated_at: new Date().toISOString() })
+        .update({ password: hashedNewPassword, updated_at: new Date().toISOString() })
         .eq("id", session.userId);
 
       if (updateError) {

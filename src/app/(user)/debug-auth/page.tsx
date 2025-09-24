@@ -63,20 +63,20 @@ export default function AuthDebugPage() {
                     Refresh Debug Info
                 </Button>
 
-        <Button onClick={clearStorage} variant="outline">
-          Clear LocalStorage
-        </Button>
-        
-        <Button 
-          onClick={async () => {
-            const result = await testStorageUpload();
-            alert(result.success ? "Storage upload test passed!" : `Upload test failed: ${result.error}`);
-          }} 
-          variant="outline"
-        >
-          Test Storage Upload
-        </Button>
-      </div>            <div className="mt-6">
+                <Button onClick={clearStorage} variant="outline">
+                    Clear LocalStorage
+                </Button>
+
+                <Button
+                    onClick={async () => {
+                        const result = await testStorageUpload();
+                        alert(result.success ? "Storage upload test passed!" : `Upload test failed: ${result.error}`);
+                    }}
+                    variant="outline"
+                >
+                    Test Storage Upload
+                </Button>
+            </div>            <div className="mt-6">
                 <h2 className="text-lg font-semibold mb-2">Debug Information:</h2>
                 <pre className="bg-gray-100 p-4 rounded-lg overflow-auto text-sm">
                     {JSON.stringify(debugInfo, null, 2)}

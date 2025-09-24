@@ -1,6 +1,7 @@
 import { supabase } from "./supabase";
 import { User, UpdateProfileRequest, UpdateProfileResponse, DeleteProfileResponse } from "@/app/api/auth/types";
 import { getUser, getSession, signOut } from "@/app/api/auth/provider";
+import { testDatabaseConnection } from "./testDatabase";
 
 export class ProfileService {
   /**
@@ -8,13 +9,57 @@ export class ProfileService {
    */
   static async getCurrentUserProfile(): Promise<User | null> {
     try {
+      // Test database connection first
+      console.log("Testing database connection...");
+      const dbTest = await testDatabaseConnection();
+      if (!dbTest.success) {
+        console.error("Database connection failed:", dbTest.error);
+        throw new Error(`Database error: ${dbTest.error}`);
+      }
+      console.log("Database connection OK");
+
+      // Check localStorage directly
+      if (typeof window !== "undefined") {
+        const userId = localStorage.getItem("user_id");
+        const userEmail = localStorage.getItem("user_email");
+        console.log("LocalStorage check:", { userId, userEmail });
+        
+        if (!userId || !userEmail) {
+          console.log("No authentication data in localStorage");
+          return null;
+        }
+      }
+
+      // First check if we have session data
+      console.log("Checking session...");
+      const { session, error: sessionError } = await getSession();
+      
+      if (sessionError) {
+        console.error("Session error:", sessionError);
+        return null;
+      }
+      
+      if (!session?.userId) {
+        console.log("No session found - user not logged in");
+        return null;
+      }
+      
+      console.log("Session found:", session);
+      
+      // Now try to get the user
       const { user, error } = await getUser();
       
-      if (error || !user) {
+      if (error) {
         console.error("Error fetching user profile:", error);
         return null;
       }
+      
+      if (!user) {
+        console.log("No user found in database");
+        return null;
+      }
 
+      console.log("User profile loaded successfully:", user);
       return user;
     } catch (error) {
       console.error("Error fetching user profile:", error);

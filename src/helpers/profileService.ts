@@ -143,11 +143,11 @@ export class ProfileService {
   static async uploadProfilePicture(file: File, userId: string): Promise<string | null> {
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const fileName = `profile-${userId}-${Date.now()}.${fileExt}`;
+      const filePath = `profiles/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from('images')
         .upload(filePath, file, {
           upsert: false
         });
@@ -157,7 +157,7 @@ export class ProfileService {
       }
 
       const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
+        .from('images')
         .getPublicUrl(filePath);
 
       return publicUrl;
@@ -203,17 +203,23 @@ export class ProfileService {
    */
   static async deleteProfilePicture(profilePicUrl: string): Promise<void> {
     try {
-      // Extract file path from URL
-      const urlParts = profilePicUrl.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      const filePath = `avatars/${fileName}`;
+      // Extract file path from URL - handle both old avatars bucket and new images bucket
+      const url = new URL(profilePicUrl);
+      const pathSegments = url.pathname.split('/');
+      
+      // Find the bucket and file path in the URL
+      const bucketIndex = pathSegments.findIndex(segment => segment === 'images' || segment === 'avatars');
+      if (bucketIndex !== -1 && bucketIndex < pathSegments.length - 1) {
+        const bucket = pathSegments[bucketIndex];
+        const filePath = pathSegments.slice(bucketIndex + 1).join('/');
+        
+        const { error } = await supabase.storage
+          .from(bucket)
+          .remove([filePath]);
 
-      const { error } = await supabase.storage
-        .from('avatars')
-        .remove([filePath]);
-
-      if (error) {
-        console.error("Error deleting old profile picture:", error);
+        if (error) {
+          console.error("Error deleting old profile picture:", error);
+        }
       }
     } catch (error) {
       console.error("Error deleting profile picture:", error);

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User, Edit3, Trash2, Upload, Eye, EyeOff, Save, X } from "lucide-react";
 import { User as UserType } from "@/app/api/auth/types";
+import { getUserProfilePicture } from "@/helpers/profilePictureUtils";
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -40,7 +41,7 @@ export default function ProfilePage() {
                 const userId = localStorage.getItem("user_id");
                 const userEmail = localStorage.getItem("user_email");
                 console.log("Profile Page - Auth Check:", { userId, userEmail });
-                
+
                 // Quick check - if no localStorage data, redirect immediately
                 if (!userId || !userEmail) {
                     console.log("❌ No authentication data found in localStorage");
@@ -208,7 +209,7 @@ export default function ProfilePage() {
                     <div className="flex items-center space-x-4">
                         <div className="relative">
                             <Image
-                                src={profilePicPreview || user.profile_pic || "/user-avatar.png"}
+                                src={profilePicPreview || getUserProfilePicture(user.profile_pic)}
                                 alt="Profile Picture"
                                 width={80}
                                 height={80}

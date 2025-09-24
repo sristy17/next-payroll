@@ -56,7 +56,8 @@ export default function Navbar({ title, description }: Readonly<NavbarProps>) {
               alt="User Avatar"
               width={44}
               height={44}
-              className="rounded-full border-2 border-white shadow object-cover w-10 h-10 md:w-11 md:h-11"
+              className="rounded-full border-2 border-white shadow object-cover w-10 h-10 md:w-11 md:h-11 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => router.push("/profile")}
             />
           </div>
         </div>

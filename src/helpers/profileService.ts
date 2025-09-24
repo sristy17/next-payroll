@@ -1,8 +1,6 @@
 import { supabase } from "./supabase";
 import { User, UpdateProfileRequest, UpdateProfileResponse, DeleteProfileResponse } from "@/app/api/auth/types";
 import { getUser, getSession, signOut } from "@/app/api/auth/provider";
-import { testDatabaseConnection } from "./testDatabase";
-import { testStorageBucket } from "./testStorage";
 
 export class ProfileService {
   /**
@@ -10,57 +8,12 @@ export class ProfileService {
    */
   static async getCurrentUserProfile(): Promise<User | null> {
     try {
-      // Test database connection first
-      console.log("Testing database connection...");
-      const dbTest = await testDatabaseConnection();
-      if (!dbTest.success) {
-        console.error("Database connection failed:", dbTest.error);
-        throw new Error(`Database error: ${dbTest.error}`);
-      }
-      console.log("Database connection OK");
-
-      // Check localStorage directly
-      if (typeof window !== "undefined") {
-        const userId = localStorage.getItem("user_id");
-        const userEmail = localStorage.getItem("user_email");
-        console.log("LocalStorage check:", { userId, userEmail });
-        
-        if (!userId || !userEmail) {
-          console.log("No authentication data in localStorage");
-          return null;
-        }
-      }
-
-      // First check if we have session data
-      console.log("Checking session...");
-      const { session, error: sessionError } = await getSession();
-      
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-        return null;
-      }
-      
-      if (!session?.userId) {
-        console.log("No session found - user not logged in");
-        return null;
-      }
-      
-      console.log("Session found:", session);
-      
-      // Now try to get the user
       const { user, error } = await getUser();
       
-      if (error) {
-        console.error("Error fetching user profile:", error);
-        return null;
-      }
-      
-      if (!user) {
-        console.log("No user found in database");
+      if (error || !user) {
         return null;
       }
 
-      console.log("User profile loaded successfully:", user);
       return user;
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -143,24 +96,10 @@ export class ProfileService {
    */
   static async uploadProfilePicture(file: File, userId: string): Promise<string | null> {
     try {
-      console.log("Starting profile picture upload...");
-      
-      // Test storage bucket first (but don't fail if test fails - try upload anyway)
-      const storageTest = await testStorageBucket();
-      if (!storageTest.success) {
-        console.warn("Storage bucket test failed, but continuing with upload:", storageTest.error);
-      }
-      
       // Validate file
       if (!file) {
         throw new Error("No file provided");
       }
-      
-      console.log("File details:", {
-        name: file.name,
-        size: file.size,
-        type: file.type
-      });
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
@@ -175,10 +114,8 @@ export class ProfileService {
       const fileExt = file.name.split('.').pop();
       const fileName = `profile-${userId}-${Date.now()}.${fileExt}`;
       const filePath = `profiles/${fileName}`;
-      
-      console.log("Uploading to:", filePath);
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('images')
         .upload(filePath, file, {
           upsert: false,
@@ -186,17 +123,12 @@ export class ProfileService {
         });
 
       if (uploadError) {
-        console.error("Upload error:", uploadError);
         throw uploadError;
       }
-      
-      console.log("Upload successful:", uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('images')
         .getPublicUrl(filePath);
-        
-      console.log("Public URL:", publicUrl);
 
       return publicUrl;
     } catch (error) {

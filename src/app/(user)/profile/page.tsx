@@ -36,16 +36,12 @@ export default function ProfilePage() {
 
     const fetchUserProfile = async () => {
         try {
-            // Debug authentication state
+            // Quick check - if no localStorage data, redirect immediately
             if (typeof window !== "undefined") {
                 const userId = localStorage.getItem("user_id");
                 const userEmail = localStorage.getItem("user_email");
-                console.log("Profile Page - Auth Check:", { userId, userEmail });
-
-                // Quick check - if no localStorage data, redirect immediately
+                
                 if (!userId || !userEmail) {
-                    console.log("❌ No authentication data found in localStorage");
-                    console.log("👉 Redirecting to login page");
                     router.push("/auth/login");
                     return;
                 }
@@ -54,12 +50,10 @@ export default function ProfilePage() {
             const userProfile = await ProfileService.getCurrentUserProfile();
 
             if (!userProfile) {
-                console.log("No user profile found, redirecting to login");
                 router.push("/auth/login");
                 return;
             }
 
-            console.log("User profile loaded:", userProfile);
             setUser(userProfile);
             setFormData({
                 name: userProfile.name || "",

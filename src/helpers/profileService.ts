@@ -2,6 +2,7 @@ import { supabase } from "./supabase";
 import { User, UpdateProfileRequest, UpdateProfileResponse, DeleteProfileResponse } from "@/app/api/auth/types";
 import { getUser, getSession, signOut } from "@/app/api/auth/provider";
 import { testDatabaseConnection } from "./testDatabase";
+import { testStorageBucket } from "./testStorage";
 
 export class ProfileService {
   /**
@@ -142,23 +143,60 @@ export class ProfileService {
    */
   static async uploadProfilePicture(file: File, userId: string): Promise<string | null> {
     try {
+      console.log("Starting profile picture upload...");
+      
+      // Test storage bucket first (but don't fail if test fails - try upload anyway)
+      const storageTest = await testStorageBucket();
+      if (!storageTest.success) {
+        console.warn("Storage bucket test failed, but continuing with upload:", storageTest.error);
+      }
+      
+      // Validate file
+      if (!file) {
+        throw new Error("No file provided");
+      }
+      
+      console.log("File details:", {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        throw new Error("File must be an image");
+      }
+      
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error("File size must be less than 5MB");
+      }
+      
       const fileExt = file.name.split('.').pop();
       const fileName = `profile-${userId}-${Date.now()}.${fileExt}`;
       const filePath = `profiles/${fileName}`;
+      
+      console.log("Uploading to:", filePath);
 
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('images')
         .upload(filePath, file, {
-          upsert: false
+          upsert: false,
+          cacheControl: '3600'
         });
 
       if (uploadError) {
+        console.error("Upload error:", uploadError);
         throw uploadError;
       }
+      
+      console.log("Upload successful:", uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('images')
         .getPublicUrl(filePath);
+        
+      console.log("Public URL:", publicUrl);
 
       return publicUrl;
     } catch (error) {

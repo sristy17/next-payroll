@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSession, getUser } from "@/app/api/auth/provider";
 import { Button } from "@/components/ui/button";
+import { testStorageBucket, testStorageUpload } from "@/helpers/testStorage";
 
 export default function AuthDebugPage() {
     const [debugInfo, setDebugInfo] = useState<any>({});
@@ -27,10 +28,14 @@ export default function AuthDebugPage() {
         // Check user
         const userResult = await getUser();
 
+        // Check storage
+        const storageResult = await testStorageBucket();
+
         setDebugInfo({
             localStorage: localStorageData,
             session: sessionResult,
             user: userResult,
+            storage: storageResult,
             timestamp: new Date().toISOString(),
         });
 
@@ -58,12 +63,20 @@ export default function AuthDebugPage() {
                     Refresh Debug Info
                 </Button>
 
-                <Button onClick={clearStorage} variant="outline">
-                    Clear LocalStorage
-                </Button>
-            </div>
-
-            <div className="mt-6">
+        <Button onClick={clearStorage} variant="outline">
+          Clear LocalStorage
+        </Button>
+        
+        <Button 
+          onClick={async () => {
+            const result = await testStorageUpload();
+            alert(result.success ? "Storage upload test passed!" : `Upload test failed: ${result.error}`);
+          }} 
+          variant="outline"
+        >
+          Test Storage Upload
+        </Button>
+      </div>            <div className="mt-6">
                 <h2 className="text-lg font-semibold mb-2">Debug Information:</h2>
                 <pre className="bg-gray-100 p-4 rounded-lg overflow-auto text-sm">
                     {JSON.stringify(debugInfo, null, 2)}
@@ -79,6 +92,8 @@ export default function AuthDebugPage() {
                     <p><strong>User Found in DB:</strong> {debugInfo.user?.user ? "✅ Yes" : "❌ No"}</p>
                     <p><strong>Session Error:</strong> {debugInfo.session?.error?.message || "None"}</p>
                     <p><strong>User Error:</strong> {debugInfo.user?.error?.message || "None"}</p>
+                    <p><strong>Storage Bucket Status:</strong> {debugInfo.storage?.success ? "✅ Available" : "❌ Error"}</p>
+                    <p><strong>Storage Error:</strong> {debugInfo.storage?.error || "None"}</p>
                 </div>
             </div>
         </div>

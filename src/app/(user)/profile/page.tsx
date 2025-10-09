@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ProfileService } from "@/helpers/profileService";
@@ -32,17 +32,13 @@ export default function ProfilePage() {
         confirmNewPassword: "",
     });
 
-    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    // State for password form visibility is handled by showPasswordForm
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
     const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null);
     const [updateLoading, setUpdateLoading] = useState(false);
 
-    useEffect(() => {
-        fetchUserProfile();
-    }, []);
-
-    const fetchUserProfile = async () => {
+    const fetchUserProfile = useCallback(async () => {
         try {
             // Quick check - if no localStorage data, redirect immediately
             if (typeof window !== "undefined") {
@@ -73,7 +69,11 @@ export default function ProfilePage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [router]);
+
+    useEffect(() => {
+        fetchUserProfile();
+    }, [fetchUserProfile]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -231,7 +231,7 @@ export default function ProfilePage() {
                     <div className="text-center">
                         <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">User not found</h2>
-                        <p className="text-gray-600 mb-6">We couldn't find your profile. Please log in again.</p>
+                        <p className="text-gray-600 mb-6">We couldn&apos;t find your profile. Please log in again.</p>
                         <Button
                             onClick={() => router.push("/auth/login")}
                             className="w-full bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-200"
@@ -490,8 +490,8 @@ export default function ProfilePage() {
                                                 <p className="text-sm text-gray-600 mt-1">Your account permissions level</p>
                                             </div>
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.is_admin
-                                                    ? 'bg-purple-100 text-purple-800'
-                                                    : 'bg-green-100 text-green-800'
+                                                ? 'bg-purple-100 text-purple-800'
+                                                : 'bg-green-100 text-green-800'
                                                 }`}>
                                                 {user.is_admin ? "Administrator" : "Regular User"}
                                             </span>

@@ -34,7 +34,7 @@ export default function Sidebar() {
         if (user && user.profile_pic) {
           setUserProfilePic(getUserProfilePicture(user.profile_pic));
         }
-      } catch (error) {
+      } catch {
         // Silently fail and use default avatar
       }
     };

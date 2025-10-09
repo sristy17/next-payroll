@@ -67,7 +67,7 @@ export class AuthService {
    * Listen to authentication state changes
    */
   static onAuthStateChange(callback: (user: User | null) => void) {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
+    return supabase.auth.onAuthStateChange(async (event) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         const user = await AuthService.getCurrentUser();
         callback(user);

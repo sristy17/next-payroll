@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect,useRef,useCallback} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "react-hot-toast";
 import { SaveAll, Shield } from "lucide-react";
+import { supabase } from "@/helpers/supabase";
+import { useUploadPhotoMutation,useRemovePhotoMutation } from "@/app/api/auth/query";
+import { getCroppedImg}  from "@/lib/utils";
+import Cropper, { Area } from "react-easy-crop"
 
 export function SectionCard({
   title,
@@ -81,6 +85,228 @@ export function SaveButton({ onClick }: { onClick: () => void }) {
     </div>
   );
 }
+
+// ----------------- Upload avatar ---------------------
+type ProfilePhotoFormProps = {
+  userData: {
+    id: string;
+    profile_pic?: string | null;  // allow both undefined and null
+  } | null;
+};
+
+export function ProfilePhotoForm({ userData }: ProfilePhotoFormProps) {
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarPath, setAvatarPath] = useState<string | null>(null);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const uploadMutation = useUploadPhotoMutation();
+  const removeMutation = useRemovePhotoMutation();
+
+  // Load existing avatar from Supabase
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchAvatar() {
+      if (userData?.profile_pic) {
+        const { data, error } = await supabase.storage
+          .from("profile_pictures")
+          .createSignedUrl(userData.profile_pic, 60 * 60);
+        if (!error && isMounted) {
+          setAvatarUrl(data.signedUrl);
+          setAvatarPath(userData.profile_pic);
+        }
+      } else {
+        setAvatarUrl(null);
+        setAvatarPath(null);
+      }
+    }
+
+    fetchAvatar();
+    return () => {
+      isMounted = false;
+    };
+  }, [userData?.profile_pic]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast.error("Invalid file type.");
+      return;
+    }
+    if (file.size / 1024 / 1024 > 1) {
+      toast.error("File too large. Max 1 MB.");
+      return;
+    }
+
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
+
+    const url = URL.createObjectURL(file);
+    setSelectedFile(file);
+    setImageUrl(url);
+    setShowCropModal(true);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+  };
+
+  const onCropComplete = useCallback((_: Area, croppedAreaPixels: Area) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const handleConfirmCrop = async () => {
+    if (!imageUrl || !croppedAreaPixels || !selectedFile || !userData?.id) return;
+
+    try {
+      const croppedBlob = await getCroppedImg(imageUrl, croppedAreaPixels);
+      const croppedFile = new File(
+        [croppedBlob],
+        `${userData.id}-${Date.now()}.${selectedFile.name.split(".").pop()}`,
+        { type: croppedBlob.type }
+      );
+
+      uploadMutation.mutate({ userId: userData.id, file: croppedFile });
+
+      setSelectedFile(null);
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+      setImageUrl(null);
+      setShowCropModal(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to crop image.");
+    }
+  };
+
+  const handleRemove = () => {
+    if (userData?.id && avatarPath) {
+      removeMutation.mutate({ userId: userData.id, avatarPath });
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+
+      <div
+        onClick={() => {
+          if (avatarUrl) setShowPreviewModal(true);
+          else fileInputRef.current?.click();
+        }}
+        className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300 shadow-md flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
+      >
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-gray-400 text-4xl font-bold">+</span>
+        )}
+      </div>
+
+      <div className="flex gap-4">
+        <Button
+          type="button"
+          disabled={uploadMutation.isPending}
+          onClick={() => fileInputRef.current?.click()}
+          className="bg-green-600 text-white"
+        >
+          {uploadMutation.isPending ? "Uploading..." : "Upload Photo"}
+        </Button>
+
+        <Button
+          type="button"
+          disabled={removeMutation.isPending || !avatarUrl}
+          onClick={handleRemove}
+          className="bg-red-500 text-white"
+        >
+          {removeMutation.isPending ? "Removing..." : "Remove Photo"}
+        </Button>
+      </div>
+
+      {/* Crop Modal */}
+      {showCropModal && imageUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded-lg w-96 h-96 relative flex flex-col items-center justify-center">
+            <Cropper
+              image={imageUrl}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              cropShape="round"
+              showGrid={true}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+              restrictPosition={false}
+            />
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.01}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-3/4"
+            />
+            <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex gap-4">
+              <Button onClick={handleConfirmCrop} disabled={uploadMutation.isPending} className="bg-green-600 text-white">
+                {uploadMutation.isPending ? "Uploading..." : "Confirm"}
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowCropModal(false);
+                  setSelectedFile(null);
+                  if (imageUrl) URL.revokeObjectURL(imageUrl);
+                  setImageUrl(null);
+                }}
+                className="bg-red-500 text-white"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Avatar Preview Modal */}
+      {showPreviewModal && avatarUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+          onClick={() => setShowPreviewModal(false)}
+        >
+          <img
+            src={avatarUrl}
+            alt="Avatar Preview"
+            className="w-64 h-64 rounded-full object-cover shadow-xl hover:cursor-pointer"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
 
 // ----------------- ResetPasswordForm -----------------
 export function ResetPasswordForm() {

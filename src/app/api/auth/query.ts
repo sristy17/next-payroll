@@ -5,6 +5,7 @@ import {
   UseMutationResult,
   UseQueryResult,
 } from "@tanstack/react-query";
+import { supabase } from "@/helpers/supabase";
 import { signUp, signIn, signOut, getUser, getSession } from "./provider";
 import {
   UserResponse,
@@ -111,3 +112,69 @@ export const useUserQuery = (): UseQueryResult<UserResponse, Error> => {
     staleTime: 5 * 60 * 1000,
   });
 };
+
+/**
+ * Mutation: Upload/Update Profile Photo
+ */
+
+export const useUploadPhotoMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ userId, file }: { userId: string; file: File }) => {
+      const fileName = `${userId}-${Date.now()}.${file.name.split(".").pop()}`;
+      const { error: uploadError } = await supabase
+        .storage
+        .from("profile_pictures")
+        .upload(fileName, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { error: dbError } = await supabase
+        .from("users")
+        .update({ profile_pic: fileName })
+        .eq("id", userId);
+      if (dbError) throw dbError;
+
+      return fileName;
+    },
+    onSuccess: async (fileName, { userId }) => {
+      // Refresh user data so navbar/sidebar see new photo
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success("Profile photo updated!");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Upload failed");
+    }
+  });
+};
+
+export const useRemovePhotoMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ userId, avatarPath }: { userId: string; avatarPath: string }) => {
+      const { error: removeError } = await supabase
+        .storage
+        .from("profile_pictures")
+        .remove([avatarPath]);
+      if (removeError) throw removeError;
+
+      const { error: dbError } = await supabase
+        .from("users")
+        .update({ profile_pic: null })
+        .eq("id", userId);
+      if (dbError) throw dbError;
+
+      return true;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success("Profile photo removed!");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Remove failed");
+    }
+  });
+};
+
+

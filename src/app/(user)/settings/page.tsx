@@ -8,6 +8,7 @@ import {
   ResetPasswordForm,
   FormInput,
   SaveButton,
+  ProfilePhotoForm,
 } from "./_components/SettingsCards";
 import Navbar from "@/components/Navbar";
 import {
@@ -19,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+
+import { useUserQuery } from "@/app/api/auth/query";
 
 type NotificationKey = "payroll" | "itr" | "gst";
 
@@ -45,6 +48,9 @@ const notificationItems: {
 ];
 
 export default function SettingsPage() {
+  // ✅ fetch user globally with TanStack
+  const { data } = useUserQuery();
+
   const [userData, setUserData] = useState({
     fullName: "Anna Sharma",
     email: "anna.sharma@email.com",
@@ -93,6 +99,14 @@ export default function SettingsPage() {
     toast.success("Notification preferences saved!");
   };
 
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center text-gray-600">
+  //       Loading...
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="flex h-screen bg-gray-100">
       <div className="flex-1 flex flex-col p-4 overflow-y-auto">
@@ -101,7 +115,18 @@ export default function SettingsPage() {
           description={`Update or Change settings for your profile.`}
         />
 
-        <main className="flex-1">
+        <main className="flex-1 space-y-6">
+          {/* Profile Photo */}
+          {data && (
+            <SectionCard
+              title="Profile Photo"
+              subtitle="Upload or change your avatar"
+              icon={<User className="w-6 h-6" />}
+            >
+              <ProfilePhotoForm userData={data?.user} />
+            </SectionCard>
+          )}
+
           {/* User Preferences */}
           <SectionCard
             title="User Preferences"

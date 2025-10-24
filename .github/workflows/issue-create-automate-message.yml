@@ -1,0 +1,27 @@
+name: Issue Greeter
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  issue-greeter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Greeter
+        uses: anishanne/greeter@V1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            ### Thank you for raising this issue!
+            We'll review it as soon as possible. We truly appreciate your contributions! ✨
+            > Meanwhile, make sure you've visited our documentation:
+            > - [README.md](https://github.com/sristy17/next-payroll/blob/dev/README.md)
+            > - [CONTRIBUTING.md](https://github.com/sristy17/next-payroll/blob/dev/CONTRIBUTING.md)
+            > - [CODE_OF_CONDUCT.md](https://github.com/sristy17/next-payroll/blob/dev/CODE_OF_CONDUCT.md)
+            > 
+            > Please do NOT create a PR until this issue has been assigned to you. 😊

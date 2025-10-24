@@ -66,3 +66,28 @@ export interface SessionResponse {
 export interface SignOutResponse {
   error: ApiError | null;
 }
+
+/**
+ * Request type for updating user profile
+ */
+export interface UpdateProfileRequest {
+  name?: string;
+  email?: string;
+  profile_pic?: string;
+}
+
+/**
+ * Response type for updating user profile
+ */
+export interface UpdateProfileResponse {
+  user: User | null;
+  error: ApiError | null;
+}
+
+/**
+ * Response type for deleting user profile
+ */
+export interface DeleteProfileResponse {
+  success: boolean;
+  error: ApiError | null;
+}

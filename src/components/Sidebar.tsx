@@ -1,10 +1,13 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "@/app/api/auth/provider";
 import { useSessionQuery } from "@/app/api/auth/query";
+import { ProfileService } from "@/helpers/profileService";
+import { getUserProfilePicture } from "@/helpers/profilePictureUtils";
 
 import {
   LayoutDashboard,
@@ -18,10 +21,26 @@ import { Button } from "./ui/button";
 
 export default function Sidebar() {
   const { data } = useSessionQuery();
+  const [userProfilePic, setUserProfilePic] = useState<string>("/user-avatar.png");
 
   const pathname = usePathname();
   const router = useRouter();
   const isActive = (path: string) => pathname === path;
+
+  useEffect(() => {
+    const fetchUserProfilePic = async () => {
+      try {
+        const user = await ProfileService.getCurrentUserProfile();
+        if (user && user.profile_pic) {
+          setUserProfilePic(getUserProfilePicture(user.profile_pic));
+        }
+      } catch {
+        // Silently fail and use default avatar
+      }
+    };
+
+    fetchUserProfilePic();
+  }, []);
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -60,10 +79,9 @@ export default function Sidebar() {
             key={item.href}
             href={item.href}
             className={`flex items-center gap-3 p-3 rounded-lg font-medium transition-colors duration-200 w-full
-              ${
-                isActive(item.href)
-                  ? "bg-white text-green-900"
-                  : "text-white hover:bg-green-800/50"
+              ${isActive(item.href)
+                ? "bg-white text-green-900"
+                : "text-white hover:bg-green-800/50"
               }
               text-sm md:text-base truncate
             `}
@@ -75,13 +93,16 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto pt-6 border-t border-green-800 w-full">
-        <div className="flex items-center space-x-3 p-3 w-full">
+        <div
+          className="flex items-center space-x-3 p-3 w-full cursor-pointer hover:bg-green-800/30 rounded-lg transition-colors duration-200"
+          onClick={() => router.push("/profile")}
+        >
           <Image
-            src="/user-avatar.png"
+            src={userProfilePic}
             alt="User Avatar"
             width={48}
             height={48}
-            className="rounded-full border-2 border-white flex-shrink-0"
+            className="rounded-full border-2 border-white flex-shrink-0 object-cover hover:opacity-80 transition-opacity duration-200"
           />
           <div className="min-w-0">
             <p className="text-white font-semibold text-sm md:text-base truncate">

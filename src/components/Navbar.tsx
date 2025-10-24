@@ -1,10 +1,12 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Bell, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ProfileService } from "@/helpers/profileService";
+import { getUserProfilePicture } from "@/helpers/profilePictureUtils";
 
 interface NavbarProps {
   title: string;
@@ -13,6 +15,22 @@ interface NavbarProps {
 
 export default function Navbar({ title, description }: Readonly<NavbarProps>) {
   const router = useRouter();
+  const [userProfilePic, setUserProfilePic] = useState<string>("/user-avatar.png");
+
+  useEffect(() => {
+    const fetchUserProfilePic = async () => {
+      try {
+        const user = await ProfileService.getCurrentUserProfile();
+        if (user && user.profile_pic) {
+          setUserProfilePic(getUserProfilePicture(user.profile_pic));
+        }
+      } catch {
+        // Silently fail and use default avatar
+      }
+    };
+
+    fetchUserProfilePic();
+  }, []);
   return (
     <header className="w-full mb-5">
       <div className="flex items-center justify-between gap-4">
@@ -52,11 +70,12 @@ export default function Navbar({ title, description }: Readonly<NavbarProps>) {
 
           <div className="flex items-center justify-center h-11 w-11">
             <Image
-              src="/user-avatar.png"
+              src={userProfilePic}
               alt="User Avatar"
               width={44}
               height={44}
-              className="rounded-full border-2 border-white shadow object-cover w-10 h-10 md:w-11 md:h-11"
+              className="rounded-full border-2 border-white shadow object-cover w-10 h-10 md:w-11 md:h-11 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => router.push("/profile")}
             />
           </div>
         </div>
